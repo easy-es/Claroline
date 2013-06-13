@@ -103,14 +103,13 @@ class DesktopParametersController extends Controller
         $user = $this->get('security.context')->getToken()->getUser();
         $switchTool = $em->getRepository('ClarolineCoreBundle:Tool\DesktopTool')
             ->findOneBy(array('user' => $user, 'order' => $position));
+        
         if ($switchTool != null) {
             throw new \RuntimeException('A tool already exists at this position');
         }
-        $desktopTool = new DesktopTool();
-        $desktopTool->setUser($user);
-        $desktopTool->setTool($tool);
-        $desktopTool->setOrder($position);
-        $em->persist($desktopTool);
+
+        $this->get('claroline.tools.manager')->addDesktopTools($user, array($tool));
+
         $em->flush();
 
         return new Response('success', 204);

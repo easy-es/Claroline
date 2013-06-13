@@ -6,11 +6,15 @@ use Doctrine\ORM\EntityManager;
 use Claroline\CoreBundle\Library\Event\ImportToolEvent;
 use Claroline\CoreBundle\Library\Event\LogWorkspaceCreateEvent;
 use Claroline\CoreBundle\Library\Resource\Manager;
+use Claroline\CoreBundle\Library\Workspace\Configuration;
+use Claroline\CoreBundle\Library\Configuration\PlatformConfigurationHandler;
 use Claroline\CoreBundle\Entity\User;
 use Claroline\CoreBundle\Entity\Role;
 use Claroline\CoreBundle\Entity\Workspace\AbstractWorkspace;
 use Claroline\CoreBundle\Entity\Tool\WorkspaceToolRole;
 use Claroline\CoreBundle\Entity\Tool\WorkspaceOrderedTool;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\Translation\Translator;
 use JMS\DiExtraBundle\Annotation as DI;
 
 /**
@@ -22,21 +26,34 @@ class Creator
     private $manager;
     private $ed;
     private $translator;
+    private $personalWsTemplateFile;
+    private $ch;
 
     /**
      * @DI\InjectParams({
      *     "em" = @DI\Inject("doctrine.orm.entity_manager"),
      *     "rm" = @DI\Inject("claroline.resource.manager"),
      *     "ed" = @DI\Inject("event_dispatcher"),
-     *     "translator" = @DI\Inject("translator")
+     *     "translator" = @DI\Inject("translator"),
+     *     "personalWsTemplateFile" = @DI\Inject("%claroline.param.templates_directory%"),
+     *     "ch" = @DI\Inject("claroline.config.platform_config_handler")
      * })
      */
-    public function __construct(EntityManager $em, Manager $rm, $ed, $translator)
+    public function __construct(
+        EntityManager $em,
+        Manager $rm,
+        EventDispatcher $ed,
+        Translator $translator,
+        $personalWsTemplateFile,
+        PlatformConfigurationHandler $ch
+    )
     {
         $this->entityManager = $em;
         $this->manager = $rm;
         $this->ed = $ed;
         $this->translator = $translator;
+        $this->personalWsTemplateFile = $personalWsTemplateFile."default.zip";
+        $this->ch = $ch;
     }
 
     /**
@@ -90,6 +107,29 @@ class Creator
         $this->ed->dispatch('log', $log);
 
         return $workspace;
+    }
+
+    /**
+     * Sets a personal workspace for a user.
+     *
+     * @param \Claroline\CoreBundle\Entity\User $user
+     */
+    public function setPersonalWorkspace(User $user)
+    {
+        if ($user->getWorkspace() !== null) {
+            throw new \Exception('The user already has a workspace');
+        }
+
+        $config = Configuration::fromTemplate($this->personalWsTemplateFile);
+        $config->setWorkspaceType(Configuration::TYPE_SIMPLE);
+        $locale = $this->ch->getParameter('locale_language');
+        $this->translator->setLocale($locale);
+        $personalWorkspaceName = $this->translator->trans('personal_workspace', array(), 'platform');
+        $config->setWorkspaceName($personalWorkspaceName);
+        $config->setWorkspaceCode($user->getUsername());
+        $workspace = $this->createWorkspace($config, $user, false);
+        $this->entityManager->persist($workspace);
+        $user->setPersonalWorkspace($workspace);
     }
 
     /**
@@ -181,8 +221,6 @@ class Creator
 
                 $tool = $this->entityManager
                     ->getRepository('ClarolineCoreBundle:Tool\Tool')->findOneBy(array('name' => $name));
-                    //$wot = $this->entityManager->getRepository('ClarolineCoreBundle:Tool\WorkspaceOrderedTool')
-                    //->findOneBy(array('tool' => $tool, 'workspace' => $workspace));
 
                 $this->setWorkspaceToolRole($wot, $role);
             }

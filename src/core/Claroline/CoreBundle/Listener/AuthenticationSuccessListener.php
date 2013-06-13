@@ -29,7 +29,7 @@ class AuthenticationSuccessListener
      * @DI\InjectParams({
      *     "context"    = @DI\Inject("security.context"),
      *     "ed"         = @DI\Inject("event_dispatcher"),
-     *     "creator" = @DI\Inject("claroline.user.creator"),
+     *     "creator" = @DI\Inject("claroline.workspace.creator"),
      *     "trans" = @DI\Inject("translator"),
      *     "ch" = @DI\Inject("claroline.config.platform_config_handler"),
      *     "em" = @DI\Inject("doctrine.orm.entity_manager"),

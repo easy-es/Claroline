@@ -32,6 +32,30 @@ class ToolRepository extends EntityRepository
         return $query->getResult();
     }
 
+    public function findDesktopDefaultTools()
+    {
+        $names = array(
+            'home',
+            'resource_manager',
+            'parameters',
+            'logs'
+        );
+
+        $firstName = array_shift($names);
+
+        $dql = "
+            SELECT tool FROM ClarolineCoreBundle:Tool\Tool tool
+            WHERE tool.name = '{$firstName}'";
+
+        foreach ($names as $name) {
+            $dql .= " OR tool.name = '{$name}'";
+        }
+
+        $query = $this->_em->createQuery($dql);
+
+        return $query->getResult();
+    }
+
     private function getDisplayedToolsForRolesInWorkspaceQuery(array $roles, AbstractWorkspace $workspace)
     {
         $isAdmin = false;

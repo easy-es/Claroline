@@ -1,14 +1,13 @@
 <?php
 namespace Claroline\CoreBundle\Library\User;
 
-use Symfony\Component\Translation\Translator;
 use Doctrine\ORM\EntityManager;
-use Claroline\CoreBundle\Library\Workspace\Configuration;
-use Claroline\CoreBundle\Library\Configuration\PlatformConfigurationHandler;
 use Claroline\CoreBundle\Library\Workspace\Creator as WsCreator;
 use Claroline\CoreBundle\Entity\User;
-use Claroline\CoreBundle\Entity\Tool\DesktopTool;
 use Claroline\CoreBundle\Library\Event\LogUserCreateEvent;
+use Claroline\CoreBundle\Library\Tools\Manager as ToolManager;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\Security\Core\SecurityContext;
 use JMS\DiExtraBundle\Annotation as DI;
 
 /**
@@ -19,41 +18,33 @@ class Creator
     const BATCH_SIZE = 150;
 
     private $em;
-    private $trans;
-    private $ch;
     private $wsCreator;
-    private $personalWsTemplateFile;
     private $ed;
     private $sc;
+    private $toolManager;
 
     /**
      * @DI\InjectParams({
      *     "em" = @DI\Inject("doctrine.orm.entity_manager"),
-     *     "trans" = @DI\Inject("translator"),
-     *     "ch" = @DI\Inject("claroline.config.platform_config_handler"),
      *     "wsCreator" = @DI\Inject("claroline.workspace.creator"),
-     *     "personalWsTemplateFile" = @DI\Inject("%claroline.param.templates_directory%"),
      *     "ed" = @DI\Inject("event_dispatcher"),
-     *     "sc" = @DI\Inject("security.context")
+     *     "sc" = @DI\Inject("security.context"),
+     *     "toolManager" = @DI\Inject("claroline.tools.manager)
      * })
      */
     public function __construct(
         EntityManager $em,
-        Translator $trans,
-        PlatformConfigurationHandler $ch,
         WsCreator $wsCreator,
-        $personalWsTemplateFile,
-        $ed,
-        $sc
+        EventDispatcher $ed,
+        SecurityContext $sc,
+        ToolManager $toolManager
     )
     {
         $this->em = $em;
-        $this->trans = $trans;
-        $this->ch = $ch;
         $this->wsCreator = $wsCreator;
-        $this->personalWsTemplateFile = $personalWsTemplateFile."default.zip";
         $this->ed = $ed;
         $this->sc = $sc;
+        $this->toolManager = $toolManager;
     }
 
     /**
@@ -68,8 +59,9 @@ class Creator
     {
         $user->addRole($this->em->getRepository('ClarolineCoreBundle:Role')->findOneByName('ROLE_USER'));
         $this->em->persist($user);
-        $this->setPersonalWorkspace($user);
-        $this->addRequiredTools($user, $this->findRequiredTools());
+        $this->wsCreator->setPersonalWorkspace($user);
+        $requiredTools = $this->em->getRepository('ClarolineCoreBundle:Tool\Tool')->findDesktopDefaultTools();
+        $this->toolManager->addRequiredTools($user, $requiredTools);
 
         if ($autoflush) {
             $this->em->flush();
@@ -96,7 +88,7 @@ class Creator
     public function import($users)
     {
         $role = $this->em->getRepository('ClarolineCoreBundle:Role')->findOneBy(array('name' => 'ROLE_USER'));
-        $requiredTools = $this->findRequiredTools();
+        $requiredTools = $this->em->getRepository('ClarolineCoreBundle:Tool\Tool')->findDesktopDefaultTools();
         $i = $j = 0;
 
         foreach ($users as $user) {
@@ -112,7 +104,7 @@ class Creator
                 $userEntity->setMail($user[5]);
             }
 
-            $this->addRequiredTools($userEntity, $requiredTools);
+            $this->toolManager->addRequiredTools($userEntity, $requiredTools);
             $this->em->persist($userEntity);
             $log = new LogUserCreateEvent($userEntity);
             $this->ed->dispatch('log', $log);
@@ -138,45 +130,5 @@ class Creator
 
         $this->em->flush();
         $this->em->clear();
-    }
-
-    private function addRequiredTools(User $user, array $requiredTools)
-    {
-        $i = 1;
-
-        foreach ($requiredTools as $requiredTool) {
-            $udt = new DesktopTool();
-            $udt->setUser($user);
-            $udt->setOrder($i);
-            $udt->setTool($requiredTool);
-            $i++;
-            $this->em->persist($udt);
-        }
-
-    }
-
-    private function findRequiredTools()
-    {
-        $repo = $this->em->getRepository('ClarolineCoreBundle:Tool\Tool');
-        $requiredTools[] = $repo->findOneBy(array('name' => 'home'));
-        $requiredTools[] = $repo->findOneBy(array('name' => 'resource_manager'));
-        $requiredTools[] = $repo->findOneBy(array('name' => 'parameters'));
-        $requiredTools[] = $repo->findOneBy(array('name' => 'logs'));
-
-        return $requiredTools;
-    }
-
-    public function setPersonalWorkspace(User $user)
-    {
-        $config = Configuration::fromTemplate($this->personalWsTemplateFile);
-        $config->setWorkspaceType(Configuration::TYPE_SIMPLE);
-        $locale = $this->ch->getParameter('locale_language');
-        $this->trans->setLocale($locale);
-        $personalWorkspaceName = $this->trans->trans('personal_workspace', array(), 'platform');
-        $config->setWorkspaceName($personalWorkspaceName);
-        $config->setWorkspaceCode($user->getUsername());
-        $workspace = $this->wsCreator->createWorkspace($config, $user, false);
-        $this->em->persist($workspace);
-        $user->setPersonalWorkspace($workspace);
     }
 }
