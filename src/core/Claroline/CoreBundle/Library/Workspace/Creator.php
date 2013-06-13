@@ -49,7 +49,7 @@ class Creator
      *
      * @return AbstractWorkspace
      */
-    public function createWorkspace(Configuration $config, User $manager, $autoflush = true)
+    public function createWorkspace(Configuration $config, User $manager)
     {
         $config->check();
         $workspaceType = $config->getWorkspaceType();
