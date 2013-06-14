@@ -88,7 +88,6 @@ class Creator
         $log = new LogWorkspaceCreateEvent($workspace);
         $this->ed->dispatch('log', $log);
 
-        echo (PHP_EOL.'workspaceover');
         return $workspace;
     }
 
