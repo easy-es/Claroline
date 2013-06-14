@@ -134,7 +134,7 @@ class LoadResourcesData extends LoggableFixture implements ContainerAwareInterfa
         $dir->setName($name);
         $this->log('create '.$name);
         $dir = $this->container->get('claroline.resource.manager')
-            ->create($dir, $parent->getId(), 'directory', $user, null, false, true);
+            ->create($dir, $parent->getId(), 'directory', $user, null, true);
         $this->totalResources++;
 
         return $dir;
@@ -152,7 +152,7 @@ class LoadResourcesData extends LoggableFixture implements ContainerAwareInterfa
         $file->setSize(0);
         $this->log('create '.$name);
         $file = $this->container->get('claroline.resource.manager')
-            ->create($file, $parent->getId(), 'file', $user, null, false, false);
+            ->create($file, $parent->getId(), 'file', $user, null, false);
         $this->totalResources++;
 
         return $file;

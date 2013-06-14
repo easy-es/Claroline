@@ -3,7 +3,6 @@ namespace Claroline\CoreBundle\Library\User;
 
 use Symfony\Component\Translation\Translator;
 use Claroline\CoreBundle\Library\Doctrine\ORM\EntityManager;
-//use Doctrine\ORM\EntityManager;
 use Claroline\CoreBundle\Library\Workspace\Configuration;
 use Claroline\CoreBundle\Library\Configuration\PlatformConfigurationHandler;
 use Claroline\CoreBundle\Library\Workspace\Creator as WsCreator;
@@ -65,20 +64,18 @@ class Creator
      *
      * @return User
      */
-    public function create(User $user, $autoflush = true)
+    public function create(User $user)
     {
         $user->addRole($this->em->getRepository('ClarolineCoreBundle:Role')->findOneByName('ROLE_USER'));
         $this->em->persist($user);
+        $this->em->disableFlush();
         $this->setPersonalWorkspace($user);
         $this->addRequiredTools($user, $this->findRequiredTools());
-
-        if ($autoflush) {
-            $this->em->flush();
-        }
-
         $log = new LogUserCreateEvent($user);
         $this->ed->dispatch('log', $log);
-
+        $this->em->enableFlush();
+        $this->em->flush();
+        
         return $user;
     }
 
@@ -100,7 +97,7 @@ class Creator
         $requiredTools = $this->findRequiredTools();
         $i = $j = 0;
 
-//        $this->em->disableFlush();
+        $this->em->disableFlush();
 
         foreach ($users as $user) {
             $userEntity = new User();
@@ -123,10 +120,10 @@ class Creator
             if (($i % self::BATCH_SIZE) === 0) {
                 $j++;
 
-//                $this->em->enableFlush();
+                $this->em->enableFlush();
                 $this->em->flush();
                 $this->em->clear();
-//                $this->em->disableFlush();
+                $this->em->disableFlush();
 
                 echo ("batch [{$j}] | users [{$i}] | UOW  [{$this->em->getUnitOfWork()->size()}]".PHP_EOL);
 
@@ -143,7 +140,7 @@ class Creator
             $i++;
         }
 
-//        $this->em->enableFlush();
+        $this->em->enableFlush();
         $this->em->flush();
         $this->em->clear();
     }

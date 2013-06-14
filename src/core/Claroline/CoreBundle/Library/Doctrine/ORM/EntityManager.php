@@ -53,9 +53,18 @@ class EntityManager extends m
         $this->isFlushActivated = false;
     }
 
+    public function setFlushable($bool)
+    {
+        $this->isFlushActivated = $bool;
+    }
+
+    public function isFlushable()
+    {
+        return $this->isFlushActivated;
+    }
+
     public function flush($entity = null)
     {
-        var_dump('JE SUIS LE CLARO ENTITY MANAGER');
         if ($this->isFlushActivated) {
             parent::flush($entity);
         }

@@ -16,7 +16,6 @@ class LogGenericEvent extends Event
     protected $workspace;
     protected $owner;
     protected $toolName;
-
     protected $childType;
     protected $childAction;
 
@@ -122,7 +121,7 @@ class LogGenericEvent extends Event
     }
 
     /**
-     * Returns the sub entity's type in case of indirect resource update 
+     * Returns the sub entity's type in case of indirect resource update
      * (creation/delete/update of plugin's sub entities; e.g. In a forum we have threads and posts as sub entities)
      */
     public function getChildType()
@@ -131,8 +130,8 @@ class LogGenericEvent extends Event
     }
 
     /**
-     * Returns the sub entity's action name in case of indirect resource update 
-     * (creation/delete/update of plugin's sub entities; e.g. 
+     * Returns the sub entity's action name in case of indirect resource update
+     * (creation/delete/update of plugin's sub entities; e.g.
      * In a forum we can have thread creation, post publication etc.)
      */
     public function getChildAction()

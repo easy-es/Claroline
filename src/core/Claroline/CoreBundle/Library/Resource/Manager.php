@@ -3,7 +3,7 @@
 namespace Claroline\CoreBundle\Library\Resource;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Doctrine\ORM\EntityManager;
+use Claroline\CoreBundle\Library\Doctrine\ORM\EntityManager;
 use Gedmo\Exception\UnexpectedValueException;
 use Claroline\CoreBundle\Entity\User;
 use Claroline\CoreBundle\Entity\Role;
@@ -77,10 +77,10 @@ class Manager
         $resourceType,
         User $user = null,
         $rights = null,
-        $autoflush = true,
         $autolog = true
     )
     {
+        $this->em->disableFlush();
         $resourceType = $this->em
             ->getRepository('ClarolineCoreBundle:Resource\ResourceType')
             ->findOneBy(array('name' => $resourceType));
@@ -122,14 +122,13 @@ class Manager
             $this->setResourceRights($resource, $rights);
         }
 
-        if ($autoflush) {
-            $this->em->flush();
-        }
-
         if ($autolog) {
             $log = new LogResourceCreateEvent($resource);
             $this->ed->dispatch('log', $log);
         }
+
+        $this->em->enableFlush();
+        $this->em->flush();
 
         return $resource;
     }
@@ -198,6 +197,7 @@ class Manager
      */
     public function copy(AbstractResource $resource, AbstractResource $parent, User $user)
     {
+        $this->em->disableFlush();
         if (get_class($resource) == 'Claroline\CoreBundle\Entity\Resource\ResourceShortcut') {
             $copy = new \Claroline\CoreBundle\Entity\Resource\ResourceShortcut();
             $copy->setParent($parent);
@@ -216,7 +216,6 @@ class Manager
             $copy->setName($resource->getName());
             $copy->setName($this->ut->getUniqueName($copy, $parent));
             $this->cloneRights($resource, $copy);
-            $this->em->flush();
 
             if ($resource->getResourceType()->getName() == 'directory') {
                 foreach ($resource->getChildren() as $child) {
@@ -230,6 +229,7 @@ class Manager
 
         $this->setLastPosition($parent, $copy);
         $this->em->persist($copy);
+        $this->em->enableFlush();
         $this->em->flush();
 
         return $copy;
@@ -376,7 +376,7 @@ class Manager
             } else {
                 $role = $roles[$role.'_'.$workspace->getId()];
             }
-            $this->createRight($permissions, false, $role, $resource, $resourceTypes, false);
+            $this->createRight($permissions, false, $role, $resource, $resourceTypes);
         }
 
         $anonymousPerms = array(
@@ -392,8 +392,7 @@ class Manager
             false,
             $roleRepo->findOneBy(array('name' => 'ROLE_ANONYMOUS')),
             $resource,
-            array(),
-            false
+            array()
         );
 
         $resourceTypes = $resourceTypeRepo->findAll();
@@ -411,8 +410,7 @@ class Manager
             false,
             $roleRepo->findOneBy(array('name' => 'ROLE_ADMIN')),
             $resource,
-            $resourceTypes,
-            false
+            $resourceTypes
         );
     }
 
@@ -663,8 +661,7 @@ class Manager
         $isRecursive,
         Role $role,
         AbstractResource $resource,
-        array $resourceTypes = array(),
-        $autoflush = true
+        array $resourceTypes = array()
     )
     {
         $resourceRights = array();
@@ -689,9 +686,7 @@ class Manager
             $this->em->persist($resourceRight);
         }
 
-        if ($autoflush) {
-            $this->em->flush();
-        }
+        $this->em->flush();
     }
 
     /**

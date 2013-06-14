@@ -43,6 +43,7 @@ class LoadWorkspacesData extends LoggableFixture implements ContainerAwareInterf
         $personalWsTemplateFile = $this->container->getParameter('claroline.param.templates_directory')."default.zip";
         $config = new Configuration($personalWsTemplateFile);
         $start = time();
+        $manager->disableFlush();
 
         for ($j = 0, $i = 0; $i < $this->numberWorkspaces; $i++, $totalWorkspaces++) {
             $manfatoryFieldValue = "ws_batch" . $totalWorkspaces;
@@ -53,7 +54,9 @@ class LoadWorkspacesData extends LoggableFixture implements ContainerAwareInterf
 
             if (($i % self::BATCH_SIZE) === 0) {
                 $j++;
+                $manager->enableFlush();
                 $manager->flush();
+                $manager->disableFlush();
                 $manager->clear();
                 $admin = $this->findJohnDoe($manager);
                 $totalInserts = $i + 1;
@@ -61,6 +64,7 @@ class LoadWorkspacesData extends LoggableFixture implements ContainerAwareInterf
             }
         }
 
+        $manager->enableFlush();
         $manager->flush();
         $manager->clear();
         $end = time();

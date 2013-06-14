@@ -2,7 +2,7 @@
 
 namespace Claroline\CoreBundle\Library\Workspace;
 
-use Doctrine\ORM\EntityManager;
+use Claroline\CoreBundle\Library\Doctrine\ORM\EntityManager;
 use Claroline\CoreBundle\Library\Event\ImportToolEvent;
 use Claroline\CoreBundle\Library\Event\LogWorkspaceCreateEvent;
 use Claroline\CoreBundle\Library\Resource\Manager;
@@ -56,7 +56,10 @@ class Creator
         $workspace->setPublic($config->isPublic());
         $workspace->setCode($config->getWorkspaceCode());
         $this->entityManager->persist($workspace);
+        $prevFlushAuth = $this->entityManager->isFlushable();
+        $this->entityManager->enableFlush();
         $this->entityManager->flush();
+        $this->entityManager->setFlushable($prevFlushAuth);
         $entityRoles = $this->initBaseRoles($workspace, $config);
         $rootDir = $this->manager->createRootDir($workspace, $manager, $config->getPermsRootConfiguration(), $entityRoles);
         $extractPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('claro_ws_tmp_', true);
@@ -80,15 +83,12 @@ class Creator
         $manager->addRole($entityRoles['ROLE_WS_MANAGER_'.$workspace->getId()]);
         $this->addMandatoryTools($workspace, $config, $entityRoles);
         $this->entityManager->persist($manager);
-
-//        if ($autoflush) {
-            $this->entityManager->flush();
-//        }
-
+        $this->entityManager->flush();
         $archive->close();
         $log = new LogWorkspaceCreateEvent($workspace);
         $this->ed->dispatch('log', $log);
 
+        echo (PHP_EOL.'workspaceover');
         return $workspace;
     }
 
