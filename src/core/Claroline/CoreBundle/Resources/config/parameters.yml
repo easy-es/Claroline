@@ -15,4 +15,3 @@ parameters:
     claroline.param.platform_config_handler_class: Claroline\CoreBundle\Library\Configuration\PlatformConfigurationHandler
     claroline.param.platform_options_files:
         prod: %kernel.root_dir%/config/local/platform_options.yml
-    doctrine.orm.entity_manager.class: Claroline\CoreBundle\Library\Doctrine\ORM\EntityManager

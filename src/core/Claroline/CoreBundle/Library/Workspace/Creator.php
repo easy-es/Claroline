@@ -81,9 +81,9 @@ class Creator
         $this->addMandatoryTools($workspace, $config, $entityRoles);
         $this->entityManager->persist($manager);
 
-        if ($autoflush) {
+//        if ($autoflush) {
             $this->entityManager->flush();
-        }
+//        }
 
         $archive->close();
         $log = new LogWorkspaceCreateEvent($workspace);

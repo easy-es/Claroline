@@ -40,7 +40,7 @@ class EntityManager extends m
                 throw new \InvalidArgumentException("Invalid argument: " . $conn);
         }
 
-        return new EntityManager($conn, $config, $conn->getEventManager());
+        return new self($conn, $config, $conn->getEventManager());
     }
 
     public function enableFlush()
@@ -55,6 +55,7 @@ class EntityManager extends m
 
     public function flush($entity = null)
     {
+        var_dump('JE SUIS LE CLARO ENTITY MANAGER');
         if ($this->isFlushActivated) {
             parent::flush($entity);
         }
