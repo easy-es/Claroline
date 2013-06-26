@@ -8,6 +8,7 @@ use Claroline\CoreBundle\Entity\Resource\AbstractResource;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 /**
  * Controller of the user's desktop.
@@ -83,7 +84,7 @@ class ActivityController extends Controller
      * It takes an array of resourceIds as parameter (querystring: ids[]=1&ids[]=2 ...)
      *
      * @param type $activityId the activity id
-     * 
+     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function setSequenceOrderAction(ResourceActivity $activity)
@@ -113,6 +114,8 @@ class ActivityController extends Controller
      *    options={"expose"=true}
      * )
      *
+     * @Template("ClarolineCoreBundle:Activity/player:leftMenu.html.twig")
+     *
      * Renders the left menu of the activity player.
      * Called from an iframe.
      *
@@ -130,15 +133,12 @@ class ActivityController extends Controller
         $totalItems++;
         $items = array('resource' => $activity, 'step' => 1, 'resources' => $this->getItems($activity));
 
-        return $this->render(
-            'ClarolineCoreBundle:Activity/player:left_menu.html.twig',
-            array(
-                'resourceActivities' => $resourceActivities,
-                'activity' => $activity,
-                'items' => $items,
-                'totalSteps' => $totalSteps,
-                'totalItems' => $totalItems
-            )
+        return array(
+            'resourceActivities' => $resourceActivities,
+            'activity' => $activity,
+            'items' => $items,
+            'totalSteps' => $totalSteps,
+            'totalItems' => $totalItems
         );
     }
 
@@ -147,6 +147,8 @@ class ActivityController extends Controller
      *     "/player/{activityId}",
      *     name="claro_activity_show_player"
      * )
+     *
+     * @Template("ClarolineCoreBundle:Activity/player:activity.html.twig")
      *
      * Shows the player layout.
      *
@@ -159,12 +161,9 @@ class ActivityController extends Controller
         $resourceActivities = $em->getRepository('ClarolineCoreBundle:Resource\ResourceActivity')
             ->findResourceActivities($activity);
 
-        return $this->render(
-            'ClarolineCoreBundle:Activity/player:activity.html.twig',
-            array(
-                'activity' => $activity,
-                'resource' => $resourceActivities[0]->getResource()
-            )
+        return array(
+            'activity' => $activity,
+            'resource' => $resourceActivities[0]->getResource()
         );
     }
 
@@ -173,6 +172,9 @@ class ActivityController extends Controller
      *     "/instructions/{activityId}",
      *     name="claro_activity_show_instructions"
      * )
+     *
+     * @Template("ClarolineCoreBundle:Activity/player:instructions.html.twig")
+     *
      * Show the instructions of an activity.
      *
      * @param type $activityId the activity id
@@ -182,10 +184,7 @@ class ActivityController extends Controller
     public function showInstructionsAction($activity)
     {
 
-        return $this->render(
-            'ClarolineCoreBundle:Activity\player:instructions.html.twig',
-            array('instructions' => $activity)
-        );
+        return array('instructions' => $activity);
     }
 
     /**

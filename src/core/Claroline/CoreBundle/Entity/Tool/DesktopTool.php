@@ -7,6 +7,7 @@ use Claroline\CoreBundle\Entity\User;
 
 /**
  * @ORM\Entity(repositoryClass="Claroline\CoreBundle\Repository\ToolRepository")
+<<<<<<< HEAD
  * @ORM\Table(
  *      name="claro_user_desktop_tool",
 *       uniqueConstraints={
@@ -14,6 +15,22 @@ use Claroline\CoreBundle\Entity\User;
  *          @ORM\UniqueConstraint(name="display", columns={"user_id", "display_order"})
  *      }
  *)
+||||||| merged common ancestors
+ * @ORM\Table(name="claro_user_desktop_tool")
+=======
+ * @ORM\Table(
+ *      name="claro_user_desktop_tool",
+*       uniqueConstraints={
+ *          @ORM\UniqueConstraint(
+ *          name="tool",columns={"user_id","tool_id"}
+ *          ),
+ *      @ORM\UniqueConstraint(
+ *          name="display",columns={"user_id","display_order"}
+ *          )
+ *      }
+ *)
+ *
+>>>>>>> c781053ab242327ed177c0ddf71709c274c414c9
  */
 class DesktopTool
 {

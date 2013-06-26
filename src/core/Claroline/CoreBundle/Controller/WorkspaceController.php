@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Claroline\CoreBundle\Entity\Workspace\WorkspaceTag;
 use Claroline\CoreBundle\Entity\Workspace\AbstractWorkspace;
 use Claroline\CoreBundle\Form\WorkspaceType;
@@ -37,6 +38,8 @@ class WorkspaceController extends Controller
      * )
      * @Method("GET")
      *
+     * @Template()
+     *
      * Renders the workspace list page with its claroline layout.
      *
      * @return Response
@@ -45,16 +48,13 @@ class WorkspaceController extends Controller
     {
         $datas = $this->get('claroline.workspace.organizer')->getDatasForWorkspaceList(false);
 
-        return $this->render(
-            'ClarolineCoreBundle:Workspace:list.html.twig',
-            array(
-                'workspaces' => $datas['workspaces'],
-                'tags' => $datas['tags'],
-                'tagWorkspaces' => $datas['tagWorkspaces'],
-                'hierarchy' => $datas['hierarchy'],
-                'rootTags' => $datas['rootTags'],
-                'displayable' => $datas['displayable']
-            )
+        return array(
+            'workspaces' => $datas['workspaces'],
+            'tags' => $datas['tags'],
+            'tagWorkspaces' => $datas['tagWorkspaces'],
+            'hierarchy' => $datas['hierarchy'],
+            'rootTags' => $datas['rootTags'],
+            'displayable' => $datas['displayable']
         );
     }
 
@@ -65,6 +65,8 @@ class WorkspaceController extends Controller
      *     options={"expose"=true}
      * )
      * @Method("GET")
+     *
+     * @Template()
      *
      * Renders the registered workspace list for a user.
      *
@@ -125,17 +127,14 @@ class WorkspaceController extends Controller
             $displayable[$oneTagId] = $this->isTagDisplayable($oneTagId, $tagWorkspaces, $hierarchy);
         }
 
-        return $this->render(
-            'ClarolineCoreBundle:Workspace:list_my_workspaces.html.twig',
-            array(
-                'user' => $user,
-                'workspaces' => $workspaces,
-                'tags' => $tags,
-                'tagWorkspaces' => $tagWorkspaces,
-                'hierarchy' => $hierarchy,
-                'rootTags' => $rootTags,
-                'displayable' => $displayable
-            )
+        return array(
+            'user' => $user,
+            'workspaces' => $workspaces,
+            'tags' => $tags,
+            'tagWorkspaces' => $tagWorkspaces,
+            'hierarchy' => $hierarchy,
+            'rootTags' => $rootTags,
+            'displayable' => $displayable
         );
     }
 
@@ -171,6 +170,8 @@ class WorkspaceController extends Controller
      * )
      * @Method("GET")
      *
+     * @Template()
+     *
      * Renders the workspace creation form.
      *
      * @return Response
@@ -181,10 +182,7 @@ class WorkspaceController extends Controller
         $form = $this->get('form.factory')
             ->create(new WorkspaceType());
 
-        return $this->render(
-            'ClarolineCoreBundle:Workspace:form.html.twig',
-            array('form' => $form->createView())
-        );
+        return array('form' => $form->createView());
     }
 
     /**
@@ -196,6 +194,7 @@ class WorkspaceController extends Controller
      * )
      * @Method("POST")
      *
+     * @Template("ClarolineCoreBundle:Workspace:creationForm.html.twig")
      * @return RedirectResponse
      */
     public function createAction()
@@ -225,10 +224,7 @@ class WorkspaceController extends Controller
             return new RedirectResponse($route);
         }
 
-        return $this->render(
-            'ClarolineCoreBundle:Workspace:form.html.twig',
-            array('form' => $form->createView())
-        );
+        return array('form' => $form->createView());
     }
 
     /**
@@ -257,6 +253,8 @@ class WorkspaceController extends Controller
     }
 
     /**
+     * @Template()
+     *
      * Renders the left tool bar. Not routed.
      *
      * @param $_workspace
@@ -313,9 +311,9 @@ class WorkspaceController extends Controller
             $toolsWithTranslation[] = $toolWithTranslation;
         }
 
-        return $this->render(
-            'ClarolineCoreBundle:Workspace:tool_list.html.twig',
-            array('toolsWithTranslation' => $toolsWithTranslation, 'workspace' => $workspace)
+        return array(
+            'toolsWithTranslation' => $toolsWithTranslation,
+            'workspace' => $workspace
         );
     }
 
@@ -363,6 +361,8 @@ class WorkspaceController extends Controller
      * )
      * @Method("GET")
      *
+     * @Template("ClarolineCoreBundle:Widget:widgets.html.twig")
+     *
      * Display registered widgets.
      *
      * @param integer $workspaceId
@@ -381,24 +381,39 @@ class WorkspaceController extends Controller
 
 
 
+        $rightToConfigure = $this->get('security.context')->isGranted('parameters', $workspace);
+
+        $widgets = array();
+
         foreach ($configs as $config) {
             if ($config->isVisible()) {
                 $eventName = "widget_{$config->getWidget()->getName()}_workspace";
                 $event = new DisplayWidgetEvent($workspace);
                 $this->get('event_dispatcher')->dispatch($eventName, $event);
+
                 if ($event->hasContent()) {
+                    $widget['id'] = $config->getWidget()->getId();
                     if ($event->hasTitle()) {
-                        $responsesString[$event->getTitle()] = $event->getContent();
+                        $widget['title'] = $event->getTitle();
                     } else {
-                        $responsesString[strtolower($config->getWidget()->getName())] = $event->getContent();
+                        $widget['title'] = strtolower($config->getWidget()->getName());
                     }
+                    $widget['content'] = $event->getContent();
+                    $widget['configurable'] = (
+                        $rightToConfigure 
+                        and $config->isLocked() !== true 
+                        and $config->getWidget()->isConfigurable()
+                    );
+
+                    $widgets[] = $widget;
                 }
             }
         }
 
-        return $this->render(
-            'ClarolineCoreBundle:Widget:widgets.html.twig',
-            array('widgets' => $responsesString)
+        return array(
+            'widgets' => $widgets,
+            'isDesktop' => false,
+            'workspaceId' => $workspaceId
         );
     }
 

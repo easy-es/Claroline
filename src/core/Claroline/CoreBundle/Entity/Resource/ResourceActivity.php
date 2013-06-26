@@ -7,12 +7,26 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass="Claroline\CoreBundle\Repository\ResourceActivityRepository")
+<<<<<<< HEAD
  * @ORM\Table(
  *      name="claro_resource_activity",
  *      uniqueConstraints={
  *          @ORM\UniqueConstraint(name="user",columns={"activity_id","resource_id"})
  *      }
  * )
+||||||| merged common ancestors
+ * @ORM\Table(name="claro_resource_activity")
+=======
+ * @ORM\Table(
+ *      name="claro_resource_activity",
+ *      uniqueConstraints={
+ *          @ORM\UniqueConstraint(
+ *          name="user",columns={"activity_id","resource_id"}
+ *          )
+ *      }
+ *      
+ * )
+>>>>>>> c781053ab242327ed177c0ddf71709c274c414c9
  */
 class ResourceActivity
 {

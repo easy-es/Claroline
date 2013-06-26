@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Claroline\CoreBundle\Controller\Tool\AbstractParametersController;
 use Claroline\CoreBundle\Entity\Tool\WorkspaceOrderedTool;
 use Claroline\CoreBundle\Entity\Tool\WorkspaceToolRole;
@@ -23,6 +24,8 @@ class WorkspaceToolsParametersController extends AbstractParametersController
      *     name="claro_workspace_tools_roles"
      * )
      * @Method("GET")
+     *
+     * @Template("ClarolineCoreBundle:Tool\workspace\parameters:toolRoles.html.twig")
      */
     public function workspaceToolsRolesAction(AbstractWorkspace $workspace)
     {
@@ -84,13 +87,10 @@ class WorkspaceToolsParametersController extends AbstractParametersController
 
         $toolsPermissions = $this->container->get('claroline.utilities.misc')->arrayFill($toolsPermissions, $toFill);
 
-        return $this->render(
-            'ClarolineCoreBundle:Tool\workspace\parameters:tool_roles.html.twig',
-            array(
-                'roles' => $wsRoles,
-                'workspace' => $workspace,
-                'toolPermissions' => $toolsPermissions
-            )
+        return array(
+            'roles' => $wsRoles,
+            'workspace' => $workspace,
+            'toolPermissions' => $toolsPermissions
         );
     }
 
@@ -244,6 +244,8 @@ class WorkspaceToolsParametersController extends AbstractParametersController
      * )
      * @Method("GET")
      *
+     * @Template("ClarolineCoreBundle:Tool\workspace\parameters:workspaceOrderToolEdit.html.twig")
+     *
      * @param integer $workspaceId
      * @param integer $workspaceOrderToolId
      *
@@ -257,9 +259,20 @@ class WorkspaceToolsParametersController extends AbstractParametersController
         $WorkspaceOrderTool = $em->getRepository('ClarolineCoreBundle:Tool\WorkspaceOrderedTool')->find($workspaceOrderToolId);
         $form = $this->createForm(new WorkspaceOrderToolEditType(), $WorkspaceOrderTool);
 
+<<<<<<< HEAD
         return $this->render(
             'ClarolineCoreBundle:Tool\workspace\parameters:workspace_order_tool_edit.html.twig',
             array('form' => $form->createView(), 'workspace' => $workspace, 'wot' => $WorkspaceOrderTool)
+||||||| merged common ancestors
+        return $this->render(
+            'ClarolineCoreBundle:Tool\workspace\parameters:workspace_order_tool_edit.html.twig',
+            array('form' => $form->createView(), 'workspace' => $workspace, 'wot' => $wot)
+=======
+        return array(
+            'form' => $form->createView(),
+            'workspace' => $workspace,
+            'wot' => $wot
+>>>>>>> c781053ab242327ed177c0ddf71709c274c414c9
         );
     }
 
@@ -269,6 +282,8 @@ class WorkspaceToolsParametersController extends AbstractParametersController
      *     name="claro_workspace_order_tool_edit"
      * )
      * @Method("POST")
+     *
+     * @Template("ClarolineCoreBundle:Tool\workspace\parameters:workspaceOrderToolEdit.html.twig")
      *
      * @param integer $workspaceId
      * @param integer $workspaceOrderToolId
@@ -294,9 +309,10 @@ class WorkspaceToolsParametersController extends AbstractParametersController
             );
         }
 
-        return $this->render(
-            'ClarolineCoreBundle:Tool\workspace\parameters:workspace_order_tool_edit.html.twig',
-            array('form' => $form->createView(), 'workspace' => $workspace, 'wot' => $wot)
+        return array(
+            'form' => $form->createView(),
+            'workspace' => $workspace,
+            'wot' => $wot
         );
     }
 

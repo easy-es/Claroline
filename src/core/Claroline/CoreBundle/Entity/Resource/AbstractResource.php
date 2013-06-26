@@ -14,6 +14,7 @@ use Claroline\CoreBundle\Entity\Workspace\AbstractWorkspace;
  * Base entity for all resources.
  *
  * @ORM\Entity(repositoryClass="Claroline\CoreBundle\Repository\AbstractResourceRepository")
+<<<<<<< HEAD
  * @ORM\Table(
  *      name="claro_resource",
  *      uniqueConstraints={
@@ -21,6 +22,21 @@ use Claroline\CoreBundle\Entity\Workspace\AbstractWorkspace;
  *          @ORM\UniqueConstraint(name="previous_id",columns={"previous_id"})
  *      }
  * )
+||||||| merged common ancestors
+ * @ORM\Table(name="claro_resource")
+=======
+ * @ORM\Table(
+ *      name="claro_resource",
+ *      uniqueConstraints={
+ *          @ORM\UniqueConstraint(
+ *          name="next_id",columns={"next_id"}
+ *          ),
+ *          @ORM\UniqueConstraint(
+ *          name="previous_id",columns={"previous_id"}
+ *          )
+ *      }
+ * )
+>>>>>>> c781053ab242327ed177c0ddf71709c274c414c9
  * @ORM\InheritanceType("JOINED")
  * @Gedmo\Tree(type="materializedPath")
  * @ORM\DiscriminatorColumn(name="discr", type="string")

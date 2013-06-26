@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
 use Pagerfanta\Pagerfanta;
 use Claroline\CoreBundle\Entity\Workspace\AbstractWorkspace;
@@ -39,6 +40,8 @@ class GroupController extends Controller
      * )
      *
      * @Method("GET")
+     *
+     * @Template("ClarolineCoreBundle:Tool\workspace\group_management:registeredGroups.html.twig")
      */
     public function registeredGroupsListAction(AbstractWorkspace $workspace, $page, $search)
     {
@@ -53,10 +56,7 @@ class GroupController extends Controller
         $pager->setMaxPerPage(20);
         $pager->setCurrentPage($page);
 
-        return $this->render(
-            'ClarolineCoreBundle:Tool\workspace\group_management:registered_groups.html.twig',
-            array('workspace' => $workspace, 'pager' => $pager, 'search' => $search)
-        );
+        return array('workspace' => $workspace, 'pager' => $pager, 'search' => $search);
     }
 
     /**
@@ -77,6 +77,8 @@ class GroupController extends Controller
      * )
      *
      * @Method("GET")
+     *
+     * @Template("ClarolineCoreBundle:Tool\workspace\group_management:unregisteredGroups.html.twig")
      */
     public function unregiseredGroupsListAction(AbstractWorkspace $workspace, $page, $search)
     {
@@ -90,10 +92,7 @@ class GroupController extends Controller
         $pager->setMaxPerPage(20);
         $pager->setCurrentPage($page);
 
-        return $this->render(
-            'ClarolineCoreBundle:Tool\workspace\group_management:unregistered_groups.html.twig',
-            array('workspace' => $workspace, 'pager' => $pager, 'search' => $search)
-        );
+        return array('workspace' => $workspace, 'pager' => $pager, 'search' => $search);
     }
 
     /**
@@ -111,6 +110,8 @@ class GroupController extends Controller
      *     requirements={"workspaceId"="^(?=.*[1-9].*$)\d*$", "groupId"="^(?=.*[1-9].*$)\d*$" }
      * )
      * @Method({"POST", "GET"})
+     *
+     * @Template("ClarolineCoreBundle:Tool\workspace\group_management:groupParameters.html.twig")
      *
      * Renders the group parameter page with its layout and
      * edit the group parameters for the selected workspace.
@@ -177,13 +178,10 @@ class GroupController extends Controller
             return new RedirectResponse($route);
         }
 
-        return $this->render(
-            'ClarolineCoreBundle:Tool\workspace\group_management:group_parameters.html.twig',
-            array(
-                'workspace' => $workspace,
-                'group' => $group,
-                'form' => $form->createView()
-            )
+        return array(
+            'workspace' => $workspace,
+            'group' => $group,
+            'form' => $form->createView()
         );
     }
 

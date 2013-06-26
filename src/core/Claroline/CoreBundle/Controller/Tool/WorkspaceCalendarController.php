@@ -171,14 +171,14 @@ class WorkspaceCalendarController extends Controller
         $this->checkUserIsAllowed('calendar', $workspace);
         $listEvents = $em->getRepository('ClarolineCoreBundle:Event')->findbyWorkspaceId($workspaceId, false);
         $data = array();
-        foreach ($listEvents as $key => $object) {
 
-                $data[$key]['id'] = $object->getId();
-                $data[$key]['title'] = $object->getTitle();
-                $data[$key]['allDay'] = $object->getAllDay();
-                $data[$key]['start'] = $object->getStart()->getTimestamp();
-                $data[$key]['end'] = $object->getEnd()->getTimestamp();
-                $data[$key]['color'] = $object->getPriority();
+        foreach ($listEvents as $key => $object) {
+            $data[$key]['id'] = $object->getId();
+            $data[$key]['title'] = $object->getTitle();
+            $data[$key]['allDay'] = $object->getAllDay();
+            $data[$key]['start'] = $object->getStart()->getTimestamp();
+            $data[$key]['end'] = $object->getEnd()->getTimestamp();
+            $data[$key]['color'] = $object->getPriority();
         }
 
         return new Response(
@@ -196,7 +196,6 @@ class WorkspaceCalendarController extends Controller
      */
     public function moveAction()
     {
-
         $request = $this->get('request');
         $postData = $request->request->all();
         $em = $this->get('doctrine.orm.entity_manager');
@@ -228,7 +227,34 @@ class WorkspaceCalendarController extends Controller
             array('Content-Type' => 'application/json')
         );
     }
+<<<<<<< HEAD
 
+||||||| merged common ancestors
+    /**
+     * @Route(
+     *     "/{workspaceId}/tiny",
+     *     name="claro_workspace_agenda_tiny"
+     * )
+     * @Method({"GET","POST"})
+     *
+     * @param integer $workspaceId
+     *
+     */
+    public function tinyAction($workspaceId)
+    {
+        $em = $this->get('doctrine.orm.entity_manager');
+        $workspace = $em->getRepository('ClarolineCoreBundle:Workspace\AbstractWorkspace')->find($workspaceId);
+        $form = $this->createForm(new CalendarType());
+
+        return $this->render(
+            'ClarolineCoreBundle:Tool/workspace/calendar:test.html.twig',
+            array('workspace' => $workspace,
+                'form' => $form->createView(),
+                'resourceTypes' => $resourceTypes )
+        );
+    }
+=======
+>>>>>>> c781053ab242327ed177c0ddf71709c274c414c9
 
     private function checkUserIsAllowed($permission, AbstractWorkspace $workspace)
     {

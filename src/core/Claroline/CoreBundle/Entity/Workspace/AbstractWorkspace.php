@@ -51,7 +51,7 @@ abstract class AbstractWorkspace
     protected $code;
 
     /**
-     * @ORM\Column(name="is_public", type="boolean")
+     * @ORM\Column(name="is_public", type="boolean", nullable=true)
      */
     protected $isPublic = true;
 
@@ -98,6 +98,14 @@ abstract class AbstractWorkspace
      * )
      */
     protected $personalUser;
+
+    /**
+     * @ORM\ManyToOne(
+     *     targetEntity="Claroline\CoreBundle\Entity\User"
+     * )
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id",onDelete="SET NULL", nullable=true)
+     */
+    protected $creator;
 
     public function __construct()
     {
@@ -160,5 +168,15 @@ abstract class AbstractWorkspace
     public function getRoles()
     {
         return $this->roles;
+    }
+
+    public function getCreator()
+    {
+        return $this->creator;
+    }
+
+    public function setCreator($creator)
+    {
+        $this->creator = $creator;
     }
 }

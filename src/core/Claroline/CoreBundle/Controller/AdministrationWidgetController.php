@@ -10,6 +10,7 @@ use Claroline\CoreBundle\Entity\Widget\DisplayConfig;
 use Claroline\CoreBundle\Entity\Widget\Widget;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 class AdministrationWidgetController extends Controller
 {
@@ -19,6 +20,9 @@ class AdministrationWidgetController extends Controller
      *     name="claro_admin_widgets"
      * )
      * @Method("GET")
+     *
+     * @Template("ClarolineCoreBundle:Administration:widgets.html.twig")
+     *
      * Displays the list of widget options for the administrator.
      *
      * @return Response
@@ -31,9 +35,9 @@ class AdministrationWidgetController extends Controller
         $dconfigs = $em->getRepository('ClarolineCoreBundle:Widget\DisplayConfig')
             ->findBy(array('parent' => null, 'isDesktop' => true));
 
-        return $this->render(
-            'ClarolineCoreBundle:Administration:widgets.html.twig',
-            array('wconfigs' => $wconfigs, 'dconfigs' => $dconfigs)
+        return array(
+            'wconfigs' => $wconfigs,
+            'dconfigs' => $dconfigs
         );
     }
 
@@ -72,6 +76,8 @@ class AdministrationWidgetController extends Controller
      *
      * @param type $widgetId the widget id.
      *
+     * @Template("ClarolineCoreBundle:Administration:widgetConfiguration.html.twig")
+     *
      * @return Response
      *
      * @throws \Exception
@@ -83,10 +89,7 @@ class AdministrationWidgetController extends Controller
         $this->get('event_dispatcher')->dispatch($eventName, $event);
 
         if ($event->getContent() != '') {
-            return $this->render(
-                'ClarolineCoreBundle:Administration:widget_configuration.html.twig',
-                array('content' => $event->getContent())
-            );
+            return array('content' => $event->getContent());
         }
 
         throw new \Exception("event $eventName didn't return any response");
@@ -104,6 +107,8 @@ class AdministrationWidgetController extends Controller
      *
      * @param type $widgetId the widget id.
      *
+     * @Template("ClarolineCoreBundle:Administration:widgetConfiguration.html.twig")
+     *
      * @return Response
      *
      * @throws \Exception
@@ -115,10 +120,7 @@ class AdministrationWidgetController extends Controller
         $this->get('event_dispatcher')->dispatch($eventName, $event);
 
         if ($event->getContent() != '') {
-            return $this->render(
-                'ClarolineCoreBundle:Administration:widget_configuration.html.twig',
-                array('content' => $event->getContent())
-            );
+            return array('content' => $event->getContent());
         }
 
         throw new \Exception("event $eventName didn't return any Response");

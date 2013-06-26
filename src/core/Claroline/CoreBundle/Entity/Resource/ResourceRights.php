@@ -12,12 +12,25 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity(repositoryClass="Claroline\CoreBundle\Repository\ResourceRightsRepository")
+<<<<<<< HEAD
  * @ORM\Table(
  *      name="claro_resource_rights",
  *      uniqueConstraints={
  *          @ORM\UniqueConstraint(name="user", columns={"resource_id","role_id"})
  *      }
  * )
+||||||| merged common ancestors
+ * @ORM\Table(name="claro_resource_rights")
+=======
+ * @ORM\Table(
+ *      name="claro_resource_rights",
+ *      uniqueConstraints={
+ *          @ORM\UniqueConstraint(
+ *          name="user",columns={"resource_id","role_id"}
+ *          )
+ *      }
+ * )
+>>>>>>> c781053ab242327ed177c0ddf71709c274c414c9
  */
 class ResourceRights
 {
