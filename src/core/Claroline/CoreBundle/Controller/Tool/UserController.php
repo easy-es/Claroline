@@ -40,10 +40,8 @@ class UserController extends Controller
      *
      * @Method("GET")
      */
-    public function registeredUsersListAction($workspaceId, $page, $search)
+    public function registeredUsersListAction(AbstractWorkspace $workspace, $page, $search)
     {
-        $em = $this->container->get('doctrine.orm.entity_manager');
-        $workspace = $em->getRepository('ClarolineCoreBundle:Workspace\AbstractWorkspace')->find($workspaceId);
         $this->checkRegistration($workspace);
         $repo = $em->getRepository('ClarolineCoreBundle:User');
         $query = ($search == "") ?
@@ -79,10 +77,8 @@ class UserController extends Controller
      *
      * @Method("GET")
      */
-    public function unregiseredUsersListAction($workspaceId, $page, $search)
+    public function unregiseredUsersListAction(AbstractWorkspace $workspace, $page, $search)
     {
-        $em = $this->get('doctrine.orm.entity_manager');
-        $workspace = $em->getRepository(self::ABSTRACT_WS_CLASS)->find($workspaceId);
         $this->checkRegistration($workspace, false);
         $repo = $em->getRepository('ClarolineCoreBundle:User');
         $query = ($search == "") ?
@@ -123,11 +119,8 @@ class UserController extends Controller
      *
      * @return Response
      */
-    public function userParametersAction($workspaceId, $userId)
+    public function userParametersAction(AbstractWorkspace $workspace, $userId)
     {
-        $em = $this->get('doctrine.orm.entity_manager');
-        $workspace = $em->getRepository(self::ABSTRACT_WS_CLASS)
-            ->find($workspaceId);
         $this->checkRegistration($workspace, false);
         $user = $em->getRepository('ClarolineCoreBundle:User')
             ->find($userId);
@@ -209,13 +202,10 @@ class UserController extends Controller
      *
      * @return Response
      */
-    public function addUsersAction($workspaceId)
+    public function addUsersAction(AbstractWorkspace $workspace)
     {
         $params = $this->get('request')->query->all();
         $users = array();
-        $em = $this->get('doctrine.orm.entity_manager');
-        $workspace = $em->getRepository(self::ABSTRACT_WS_CLASS)
-            ->find($workspaceId);
         $this->checkRegistration($workspace, false);
         $roleRepo = $em->getRepository('ClarolineCoreBundle:Role');
         $role = $roleRepo->findCollaboratorRole($workspace);
@@ -261,11 +251,8 @@ class UserController extends Controller
      *
      * @return Response
      */
-    public function removeUsersAction($workspaceId)
+    public function removeUsersAction(AbstractWorkspace $workspace)
     {
-        $em = $this->get('doctrine.orm.entity_manager');
-        $workspace = $em->getRepository(self::ABSTRACT_WS_CLASS)
-            ->find($workspaceId);
         $this->checkRegistration($workspace, false);
         $roles = $em->getRepository('ClarolineCoreBundle:Role')
             ->findByWorkspace($workspace);

@@ -52,10 +52,9 @@ class AdministrationToolController extends Controller
      * @param integer $id
      * @return Response
      */
-    public function modifyToolAction($id)
+    public function modifyToolAction(Tool $tool)
     {
-        $em = $this->getDoctrine()->getManager();
-        $tool = $em->getRepository('ClarolineCoreBundle:Tool\Tool')->find($id);
+
         $form = $this->createForm(new ToolType(), $tool);
         $request = $this->get('request');
         if ($request->getMethod() === 'POST') {

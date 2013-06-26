@@ -6,6 +6,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Claroline\CoreBundle\Library\Event\ConfigureWidgetWorkspaceEvent;
 use Claroline\CoreBundle\Library\Event\ConfigureWidgetDesktopEvent;
 use Symfony\Component\HttpFoundation\Response;
+use Claroline\CoreBundle\Entity\Widget\DisplayConfig;
+use Claroline\CoreBundle\Entity\Widget\Widget;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
@@ -49,13 +51,10 @@ class AdministrationWidgetController extends Controller
      *
      * @return Response
      */
-    public function invertLockWidgetAction($displayConfigId)
+    public function invertLockWidgetAction(DisplayConfig $displayConfig)
     {
-        $em = $this->get('doctrine.orm.entity_manager');
-        $config = $em->getRepository('ClarolineCoreBundle:Widget\DisplayConfig')
-            ->find($displayConfigId);
-        $config->invertLock();
-        $em->persist($config);
+        $displayConfig->invertLock();
+        $em->persist($displayConfig);
         $em->flush();
 
         return new Response('success', 204);
@@ -77,11 +76,8 @@ class AdministrationWidgetController extends Controller
      *
      * @throws \Exception
      */
-    public function configureWorkspaceWidgetAction($widgetId)
+    public function configureWorkspaceWidgetAction(Widget $widget)
     {
-        $em = $this->get('doctrine.orm.entity_manager');
-        $widget = $em->getRepository('ClarolineCoreBundle:Widget\Widget')
-            ->find($widgetId);
         $event = new ConfigureWidgetWorkspaceEvent(null, true);
         $eventName = "widget_{$widget->getName()}_configuration_workspace";
         $this->get('event_dispatcher')->dispatch($eventName, $event);
@@ -112,11 +108,8 @@ class AdministrationWidgetController extends Controller
      *
      * @throws \Exception
      */
-    public function configureDesktopWidgetAction($widgetId)
+    public function configureDesktopWidgetAction(Widget $widgetId)
     {
-        $em = $this->get('doctrine.orm.entity_manager');
-        $widget = $em->getRepository('ClarolineCoreBundle:Widget\Widget')
-            ->find($widgetId);
         $event = new ConfigureWidgetDesktopEvent(null, true);
         $eventName = "widget_{$widget->getName()}_configuration_desktop";
         $this->get('event_dispatcher')->dispatch($eventName, $event);
@@ -143,11 +136,8 @@ class AdministrationWidgetController extends Controller
      *
      * @param integer $displayConfigId
      */
-    public function invertVisibleWidgetAction($displayConfigId)
+    public function invertVisibleWidgetAction(DisplayConfig $config)
     {
-        $em = $this->get('doctrine.orm.entity_manager');
-        $config = $em->getRepository('ClarolineCoreBundle:Widget\DisplayConfig')
-            ->find($displayConfigId);
         $config->invertVisible();
         $em->persist($config);
         $em->flush();

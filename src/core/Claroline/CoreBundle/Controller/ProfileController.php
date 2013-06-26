@@ -128,10 +128,8 @@ class ProfileController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function viewAction($userId)
+    public function viewAction(User $user)
     {
-        $em = $this->getDoctrine()->getManager();
-        $user = $em->getRepository('ClarolineCoreBundle:User')->find($userId);
 
         return $this->render(
             'ClarolineCoreBundle:Profile:profile.html.twig',

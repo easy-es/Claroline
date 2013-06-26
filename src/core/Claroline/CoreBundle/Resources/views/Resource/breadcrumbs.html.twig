@@ -3,7 +3,7 @@
     <li {% if loop.last %} class="active" {% endif %}>
 
     {% set url = path('claro_workspace_open_tool',
-        {'toolName': 'resource_manager', 'workspaceId': workspaceId })
+        {'toolName': 'resource_manager', 'id': workspaceId })
     %}
 
     {% for keyPath, pathItem in ancestors %}

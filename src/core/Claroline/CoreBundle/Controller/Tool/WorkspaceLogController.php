@@ -4,6 +4,7 @@ namespace Claroline\CoreBundle\Controller\Tool;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
+use Claroline\CoreBundle\Entity\Workspace\AbstractWorkspace;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
@@ -36,11 +37,8 @@ class WorkspaceLogController extends Controller
      *
      * @throws \Exception
      */
-    public function logListAction($workspaceId, $page)
+    public function logListAction(AbstractWorkspace $workspace, $page)
     {
-        $em = $this->container->get('doctrine.orm.entity_manager');
-        $workspace = $em->getRepository('ClarolineCoreBundle:Workspace\AbstractWorkspace')->find($workspaceId);
-
         return $this->render(
             'ClarolineCoreBundle:Tool/workspace/logs:log_list.html.twig',
             $this->get('claroline.log.manager')->getWorkspaceList($workspace, $page)

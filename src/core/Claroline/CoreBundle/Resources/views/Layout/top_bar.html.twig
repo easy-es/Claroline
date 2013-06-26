@@ -65,7 +65,7 @@
                                     {% for workspace in workspaces %}
                                         <li>
                                         <a href="{{ path('claro_workspace_open',
-                                            {'workspaceId': workspace.getId()}) }}"
+                                            {'workspace': workspace.getId()}) }}"
                                             id="link-workspace-{{ workspace.getId() }}">
                                             {{ workspace.getName() }}
                                             <span class="workspace-code">({{ workspace.getCode() }})</span>
@@ -134,7 +134,7 @@
                             {% if personalWs is not null %}
                             <li>
                             <a href="{{ path('claro_workspace_open_tool',
-                                {'workspaceId': personalWs.getId(), 'toolName': 'home'}) }}"
+                                {'id': personalWs.getId(), 'toolName': 'home'}) }}"
                                 id="link-my-workspace">
                                 {{ 'my_workspace'|trans({}, 'platform') }}
                             </a>

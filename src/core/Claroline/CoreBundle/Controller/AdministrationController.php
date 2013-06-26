@@ -216,7 +216,7 @@ class AdministrationController extends Controller
 
     /**
      * @Route(
-     *     "/group/{groupId}/users/page/{page}",
+     *     "/group/{id}/users/page/{page}",
      *     name="claro_admin_user_of_group_list",
      *     options={"expose"=true},
      *     defaults={"page"=1, "search"=""}
@@ -235,10 +235,9 @@ class AdministrationController extends Controller
      *
      * Returns the users of a group.
      */
-    public function usersOfGroupListAction($groupId, $page, $search)
+    public function usersOfGroupListAction(Group $group, $page, $search)
     {
-        $em = $this->get('doctrine.orm.entity_manager');
-        $group = $em->getRepository('ClarolineCoreBundle:Group')->find($groupId);
+        $em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository('ClarolineCoreBundle:User');
         $query = ($search == "") ?
             $repo->findByGroup($group, true):
@@ -272,10 +271,8 @@ class AdministrationController extends Controller
      *
      * Displays the user list with a control allowing to add them to a group.
      */
-    public function outsideOfGroupUserListAction($groupId, $page, $search)
+    public function outsideOfGroupUserListAction(Group $group, $page, $search)
     {
-        $em = $this->get('doctrine.orm.entity_manager');
-        $group = $em->getRepository('ClarolineCoreBundle:Group')->find($groupId);
         $repo = $em->getRepository('ClarolineCoreBundle:User');
         $query = ($search == "") ?
             $repo->findGroupOutsiders($group, true):
@@ -359,12 +356,10 @@ class AdministrationController extends Controller
      *
      * @return Response
      */
-    public function addUsersToGroupAction($groupId)
+    public function addUsersToGroupAction(Group $group)
     {
         $em = $this->getDoctrine()->getManager();
         $params = $this->get('request')->query->all();
-        $group = $em->getRepository('ClarolineCoreBundle:Group')
-            ->find($groupId);
         $users = array();
 
         if (isset($params['userIds'])) {
@@ -405,7 +400,7 @@ class AdministrationController extends Controller
      *
      * @return Response
      */
-    public function deleteUsersFromGroupAction($groupId)
+    public function deleteUsersFromGroupAction(Group $group)
     {
         $params = $this->get('request')->query->all();
         $em = $this->getDoctrine()->getManager();
@@ -472,7 +467,7 @@ class AdministrationController extends Controller
 
     /**
      * @Route(
-     *     "/group/settings/form/{groupId}",
+     *     "/group/settings/form/{id}",
      *     name="claro_admin_group_settings_form",
      *     requirements={"groupId"="^(?=.*[1-9].*$)\d*$"}
      * )
@@ -484,11 +479,9 @@ class AdministrationController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function groupSettingsFormAction($groupId)
+    public function groupSettingsFormAction(Group $group)
     {
         $em = $this->getDoctrine()->getManager();
-        $group = $em->getRepository('ClarolineCoreBundle:Group')
-            ->find($groupId);
         $form = $this->createForm(new GroupSettingsType(), $group);
 
         return $this->render(
@@ -499,7 +492,7 @@ class AdministrationController extends Controller
 
     /**
      * @Route(
-     *     "/group/settings/update/{groupId}",
+     *     "/group/settings/update/{id}",
      *     name="claro_admin_update_group_settings"
      * )
      *
@@ -509,15 +502,11 @@ class AdministrationController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function updateGroupSettingsAction($groupId)
+    public function updateGroupSettingsAction(Group $group)
     {
         $request = $this->get('request');
         $em = $this->getDoctrine()->getManager();
-        $group = $em->getRepository('ClarolineCoreBundle:Group')
-            ->find($groupId);
-
         $oldPlatformRoleTransactionKey = $group->getPlatformRole()->getTranslationKey();
-
         $form = $this->createForm(new GroupSettingsType(), $group);
         $form->handleRequest($request);
 

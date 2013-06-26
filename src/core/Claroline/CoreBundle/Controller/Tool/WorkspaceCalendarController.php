@@ -28,10 +28,9 @@ class WorkspaceCalendarController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function addEventAction($workspaceId)
+    public function addEventAction(AbstractWorkspace $workspace)
     {
-        $em = $this->getDoctrine()->getManager();
-        $workspace = $em->getRepository(self::ABSTRACT_WS_CLASS)->find($workspaceId);
+
         $this->checkUserIsAllowed('calendar', $workspace);
         $event = new Event();
         $form = $this->createForm(new CalendarType, $event);
@@ -94,10 +93,8 @@ class WorkspaceCalendarController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function updateAction($workspaceId)
+    public function updateAction(AbstractWorkspace $workspace)
     {
-        $em = $this->getDoctrine()->getManager();
-        $workspace = $em->getRepository(self::ABSTRACT_WS_CLASS)->find($workspaceId);
         $this->checkUserIsAllowed('calendar', $workspace);
         $request = $this->get('request');
         $postData = $request->request->all();
@@ -141,10 +138,8 @@ class WorkspaceCalendarController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function deleteAction($workspaceId)
+    public function deleteAction(AbstractWorkspace $workspace)
     {
-        $em = $this->getDoctrine()->getManager();
-        $workspace = $em->getRepository(self::ABSTRACT_WS_CLASS)->find($workspaceId);
         $this->checkUserIsAllowed('calendar', $workspace);
         $repository = $em->getRepository('ClarolineCoreBundle:Event');
         $request = $this->get('request');
@@ -171,10 +166,8 @@ class WorkspaceCalendarController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function showAction($workspaceId)
+    public function showAction(AbstractWorkspace $workspace)
     {
-        $em = $this->get('doctrine.orm.entity_manager');
-        $workspace = $em->getRepository(self::ABSTRACT_WS_CLASS)->find($workspaceId);
         $this->checkUserIsAllowed('calendar', $workspace);
         $listEvents = $em->getRepository('ClarolineCoreBundle:Event')->findbyWorkspaceId($workspaceId, false);
         $data = array();
@@ -235,29 +228,7 @@ class WorkspaceCalendarController extends Controller
             array('Content-Type' => 'application/json')
         );
     }
-    /**
-     * @Route(
-     *     "/{workspaceId}/tiny",
-     *     name="claro_workspace_agenda_tiny"
-     * )
-     * @Method({"GET","POST"})
-     *
-     * @param integer $workspaceId
-     *
-     */
-    public function tinyAction($workspaceId)
-    {
-        $em = $this->get('doctrine.orm.entity_manager');
-        $workspace = $em->getRepository('ClarolineCoreBundle:Workspace\AbstractWorkspace')->find($workspaceId);
-        $form = $this->createForm(new CalendarType());
 
-        return $this->render(
-            'ClarolineCoreBundle:Tool/workspace/calendar:test.html.twig',
-            array('workspace' => $workspace,
-                'form' => $form->createView(),
-                'resourceTypes' => $resourceTypes )
-        );
-    }
 
     private function checkUserIsAllowed($permission, AbstractWorkspace $workspace)
     {

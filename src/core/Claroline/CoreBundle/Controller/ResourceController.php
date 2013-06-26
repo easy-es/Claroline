@@ -16,6 +16,8 @@ use Claroline\CoreBundle\Library\Event\CustomActionResourceEvent;
 use Claroline\CoreBundle\Library\Event\LogResourceReadEvent;
 use Claroline\CoreBundle\Library\Event\OpenResourceEvent;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Claroline\CoreBundle\Entity\Workspace\AbstractWorkspace;
+
 
 class ResourceController extends Controller
 {
@@ -113,7 +115,7 @@ class ResourceController extends Controller
 
     /**
      * @Route(
-     *     "/open/{resourceType}/{resourceId}",
+     *     "/open/{resourceType}/{id}",
      *     name="claro_resource_open",
      *     options={"expose"=true}
      * )
@@ -128,11 +130,9 @@ class ResourceController extends Controller
      * @throws AccessDeniedException
      * @throws \Exception
      */
-    public function openAction($resourceId, $resourceType)
+    public function openAction(AbstractResource $resource, $resourceType)
     {
-        $em = $this->getDoctrine()->getManager();
-        $resource = $em->getRepository('ClarolineCoreBundle:Resource\AbstractResource')
-            ->find($resourceId);
+
         $collection = new ResourceCollection(array($resource));
         //If it's a link, the resource will be its target.
         $resource = $this->getResource($resource);
@@ -256,7 +256,7 @@ class ResourceController extends Controller
 
     /**
      * @Route(
-     *     "/custom/{resourceType}/{action}/{resourceId}",
+     *     "/custom/{resourceType}/{action}/{id}",
      *     name="claro_resource_custom",
      *     options={"expose"=true}
      * )
@@ -271,12 +271,10 @@ class ResourceController extends Controller
      * @throws \Exception
      * @return Response
      */
-    public function customAction($resourceType, $action, $resourceId)
+    public function customAction($resourceType, $action,AbstractResource $resource)
     {
         $eventName = $action . '_' . $resourceType;
-        $em = $this->get('doctrine.orm.entity_manager');
-        $resource = $em->getRepository('ClarolineCoreBundle:Resource\AbstractResource')
-            ->find($resourceId);
+
         //$collection = new ResourceCollection(array($resource));
 
         $event = new CustomActionResourceEvent($resource);
@@ -400,6 +398,9 @@ class ResourceController extends Controller
             }
 
             $path = $resourceRepo->findAncestors($directory);
+
+
+            
             $resources = $resourceRepo->findChildren($directory, $currentRoles);
             $resources = $this->get('claroline.resource.manager')->sort($resources);
 
@@ -449,13 +450,11 @@ class ResourceController extends Controller
      *
      * @return Response
      */
-    public function copyAction($resourceDestinationId)
+    public function copyAction(AbstractResource $parent)
     {
         $ids = $this->container->get('request')->query->get('ids', array());
         $token = $this->get('security.context')->getToken();
         $em = $this->getDoctrine()->getManager();
-        $parent = $em->getRepository('ClarolineCoreBundle:Resource\AbstractResource')
-            ->find($resourceDestinationId);
         $newNodes = array();
         $resources = array();
 
@@ -544,12 +543,10 @@ class ResourceController extends Controller
      *
      * @return Response
      */
-    public function createShortcutAction($newParentId)
+    public function createShortcutAction(AbstractResource $parent)
     {
         $em = $this->get('doctrine.orm.entity_manager');
-        $repo = $em->getRepository('ClarolineCoreBundle:Resource\AbstractResource');
         $ids = $this->container->get('request')->query->get('ids', array());
-        $parent = $repo->find($newParentId);
 
         foreach ($ids as $resourceId) {
             $resource = $repo->find($resourceId);
@@ -602,7 +599,7 @@ class ResourceController extends Controller
     {
         $em = $this->get('doctrine.orm.entity_manager');
         $resource = $em->getRepository('ClarolineCoreBundle:Resource\AbstractResource')->find($resourceId);
-
+        
         $ancestors = $em->getRepository('ClarolineCoreBundle:Resource\AbstractResource')
             ->findAncestors($resource);
 
@@ -648,7 +645,7 @@ class ResourceController extends Controller
 
     /**
      * @Route(
-     *     "/sort/{resourceId}/next/{nextId}",
+     *     "/sort/{id}/next/{nextId}",
      *     name="claro_resource_insert_before",
      *     options={"expose"=true}
      * )
@@ -659,19 +656,19 @@ class ResourceController extends Controller
      * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function insertBefore($resourceId, $nextId)
+    public function insertBefore(AbstractResource $resource, $nextId)
     {
         $em = $this->get('doctrine.orm.entity_manager');
         $repo = $em->getRepository('ClarolineCoreBundle:Resource\AbstractResource');
-        $resource = $repo->find($resourceId);
+        //$resource = $repo->find($resourceId);
         $user = $this->get('security.context')->getToken()->getUser();
 
         if ($user !== $resource->getParent()->getCreator() && !$this->get('security.context')->isGranted('ROLE_ADMIN')) {
             throw new AccessDeniedException();
         }
-
+        
         $next = $repo->find($nextId);
-
+        
         if ($next !== null) {
             $this->get('claroline.resource.manager')->insertBefore($resource, $next);
         } else {

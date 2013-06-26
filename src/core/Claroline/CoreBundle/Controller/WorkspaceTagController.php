@@ -6,6 +6,7 @@ use Claroline\CoreBundle\Form\WorkspaceTagType;
 use Claroline\CoreBundle\Form\AdminWorkspaceTagType;
 use Claroline\CoreBundle\Entity\Workspace\WorkspaceTag;
 use Claroline\CoreBundle\Entity\Workspace\RelWorkspaceTag;
+use Claroline\CoreBundle\Entity\Workspace\AbstractWorkspace;
 use Claroline\CoreBundle\Entity\Workspace\WorkspaceTagHierarchy;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
@@ -287,14 +288,13 @@ class WorkspaceTagController extends Controller
      *
      * @return Response
      */
-    public function addTagToWorkspace($userId, $workspaceId, $tagName)
+    public function addTagToWorkspace($userId,AbstractWorkspace $workspace, $tagName)
     {
         if (!$this->get('security.context')->isGranted('ROLE_USER')) {
             throw new AccessDeniedException();
         }
         $user = $this->get('security.context')->getToken()->getUser();
         $em = $this->get('doctrine.orm.entity_manager');
-        $workspace = $em->getRepository('ClarolineCoreBundle:Workspace\AbstractWorkspace')->find($workspaceId);
 
         if (is_null($user) || is_null($workspace)) {
             throw new \RuntimeException('User, Workspace cannot be null');
@@ -349,13 +349,12 @@ class WorkspaceTagController extends Controller
      *
      * @return Response
      */
-    public function addAdminTagToWorkspace($workspaceId, $tagName)
+    public function addAdminTagToWorkspace(AbstractWorkspace $workspace, $tagName)
     {
         if (!$this->get('security.context')->isGranted('ROLE_ADMIN')) {
             throw new AccessDeniedException();
         }
         $em = $this->get('doctrine.orm.entity_manager');
-        $workspace = $em->getRepository('ClarolineCoreBundle:Workspace\AbstractWorkspace')->find($workspaceId);
 
         if (is_null($workspace)) {
             throw new \RuntimeException('Workspace cannot be null');
@@ -409,11 +408,9 @@ class WorkspaceTagController extends Controller
      *
      * @return Response
      */
-    public function removeTagFromWorkspace($userId, $workspaceId, $workspaceTagId)
+    public function removeTagFromWorkspace($userId,AbstractWorkspace $workspace,WorkspaceTag $workspaceTag)
     {
         $em = $this->get('doctrine.orm.entity_manager');
-        $workspace = $em->getRepository('ClarolineCoreBundle:Workspace\AbstractWorkspace')->find($workspaceId);
-        $workspaceTag = $em->getRepository('ClarolineCoreBundle:Workspace\WorkspaceTag')->find($workspaceTagId);
         $user = $this->get('security.context')->getToken()->getUser();
 
         if (is_null($user) || is_null($workspace) || is_null($workspaceTag)) {
@@ -450,14 +447,12 @@ class WorkspaceTagController extends Controller
      *
      * @return Response
      */
-    public function removeAdminTagFromWorkspace($workspaceId, $workspaceTagId)
+    public function removeAdminTagFromWorkspace(AbstractWorkspace $workspace,WorkspaceTag $workspaceTag)
     {
         if (!$this->get('security.context')->isGranted('ROLE_ADMIN')) {
             throw new AccessDeniedException();
         }
         $em = $this->get('doctrine.orm.entity_manager');
-        $workspace = $em->getRepository('ClarolineCoreBundle:Workspace\AbstractWorkspace')->find($workspaceId);
-        $workspaceTag = $em->getRepository('ClarolineCoreBundle:Workspace\WorkspaceTag')->find($workspaceTagId);
 
         if (is_null($workspace) || is_null($workspaceTag)) {
             throw new \RuntimeException('Workspace or Tag cannot be null');
@@ -583,15 +578,13 @@ class WorkspaceTagController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function checkPotentialWorkspaceAdminTagChildren($tagId)
+    public function checkPotentialWorkspaceAdminTagChildren(WorkspaceTag $tag)
     {
         if (!$this->get('security.context')->isGranted('ROLE_ADMIN')) {
             throw new AccessDeniedException();
         }
 
         $em = $this->get('doctrine.orm.entity_manager');
-        $tag = $em->getRepository('ClarolineCoreBundle:Workspace\WorkspaceTag')
-            ->findOneById($tagId);
         $children = $em->getRepository('ClarolineCoreBundle:Workspace\WorkspaceTag')
             ->findAdminChildren($tag);
         $possibleChildren = $em->getRepository('ClarolineCoreBundle:Workspace\WorkspaceTag')
@@ -659,7 +652,7 @@ class WorkspaceTagController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function addAdminTagChildren($tagId, $childrenString)
+    public function addAdminTagChildren(WorkspaceTag $tag, $childrenString)
     {
         if (!$this->get('security.context')->isGranted('ROLE_ADMIN')) {
             throw new AccessDeniedException();
@@ -670,8 +663,6 @@ class WorkspaceTagController extends Controller
         if (is_array($children) && count($children) > 0) {
 
             $em = $this->get('doctrine.orm.entity_manager');
-            $tag = $em->getRepository('ClarolineCoreBundle:Workspace\WorkspaceTag')
-                ->findOneById($tagId);
             // Get all hierarchies where param $tag is a child
             $tagsHierarchy = $em->getRepository('ClarolineCoreBundle:Workspace\WorkspaceTagHierarchy')
                 ->findBy(array('user' => null , 'tag' => $tag));
@@ -764,7 +755,7 @@ class WorkspaceTagController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function removeAdminTagChildren($tagId, $childrenString)
+    public function removeAdminTagChildren(WorkspaceTag $tag, $childrenString)
     {
         if (!$this->get('security.context')->isGranted('ROLE_ADMIN')) {
             throw new AccessDeniedException();
@@ -775,8 +766,6 @@ class WorkspaceTagController extends Controller
         if (is_array($children) && count($children) > 0) {
 
             $em = $this->get('doctrine.orm.entity_manager');
-            $tag = $em->getRepository('ClarolineCoreBundle:Workspace\WorkspaceTag')
-                ->findOneById($tagId);
 
             // Get all hierarchies where parent is in param $childrenString
             $childrenHierarchy = $em->getRepository('ClarolineCoreBundle:Workspace\WorkspaceTagHierarchy')

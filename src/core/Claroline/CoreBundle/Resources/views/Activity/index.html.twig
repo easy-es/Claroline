@@ -42,7 +42,7 @@
                                 {% for customAction in resourceType.getCustomActions() %}
                                     "{{ customAction.getAction() }}": {
                                         "name": "{{ customAction.getAction() }}",
-                                        "route": "{{ path('claro_resource_custom', {'resourceType': resourceType.getName(), 'action': customAction.getAction(), 'resourceId': '_resourceId' }) }}",
+                                        "route": "{{ path('claro_resource_custom', {'resourceType': resourceType.getName(), 'action': customAction.getAction(), 'id': '_resourceId' }) }}",
                                         "async": {{ customAction.isAsync() }}
                                     }
                                     {% if loop.last != true %},{% endif %}
@@ -59,13 +59,13 @@
         var callBack = function(resources){
             console.debug(resources);
             $.ajax({
-            url: Routing.generate('claro_activity_add_resource', {'activityId':{{ _resource.getId() }}, 'resourceId': _.keys(resources)[0]}),
+            url: Routing.generate('claro_activity_add_resource', {'id':{{ _resource.getId() }}, 'resourceId': _.keys(resources)[0]}),
             type: 'GET',
             success: function(resources){
                 var html = "";
                 html+= "<li>";
                 html+= "<span class='close' href="+Routing.generate('claro_activity_remove_resource', {'resourceId':resources[0].id, 'activityId': {{ _resource.getId() }} })+">x</span>";
-                html+= "<a href="+Routing.generate('claro_resource_open', {'resourceType': resources[0].type, 'action': 'open', 'resourceId': resources[0].id})+">"+resources[0].name+"</a> ";
+                html+= "<a href="+Routing.generate('claro_resource_open', {'resourceType': resources[0].type, 'action': 'open', 'id': resources[0].id})+">"+resources[0].name+"</a> ";
                 html+="</li>";
 
                 $("#sortable").append(html);
@@ -101,7 +101,7 @@
     {% for resourceActivity in resourceActivities %}
             <li id={{ resourceActivity.getResource().getId() }}>
                 <span><a class="close" href="{{ path('claro_activity_remove_resource', {'resourceId':resourceActivity.getResource().getId(), 'activityId': resourceActivity.getActivity().getId()})}}">x</a></span>
-                <a href="{{ path('claro_resource_open', {'resourceType':resourceActivity.getResource().getResourceType().getName(), 'resourceId':resourceActivity.getResource().getId()} )}}">{{ resourceActivity.getResource().getName() }}</a>
+                <a href="{{ path('claro_resource_open', {'resourceType':resourceActivity.getResource().getResourceType().getName(), 'id':resourceActivity.getResource().getId()} )}}">{{ resourceActivity.getResource().getName() }}</a>
             </li>
     {% endfor %}
     </ul>

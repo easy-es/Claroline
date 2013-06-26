@@ -26,7 +26,7 @@
                         {% set granted = is_granted('home', workspace) %}
                         {% if granted == true %}
                         <a href="{{ path('claro_workspace_open',
-                           {'workspaceId': workspace.getId(), 'toolName': 'home'}) }}"
+                           {'workspace': workspace.getId(), 'toolName': 'home'}) }}"
                            id="link-home-{{ workspace.getId() }}"
                         >
                         {% endif %}
@@ -80,7 +80,7 @@
                             {% set granted = is_granted('home', workspace) %}
                             {% if granted == true %}
                             <a  href="{{ path('claro_workspace_open',
-                                {'workspaceId': workspace.getId(), 'toolName': 'home'}) }}"
+                                {'workspace': workspace.getId(), 'toolName': 'home'}) }}"
                                 id="link-home-{{ workspace.getId() }}"
                             >
                             {% endif %}

@@ -11,7 +11,9 @@ use Claroline\CoreBundle\Library\Event\LogResourceChildUpdateEvent;
 use Claroline\CoreBundle\Form\LogWorkspaceWidgetConfigType;
 use Claroline\CoreBundle\Form\LogDesktopWidgetConfigType;
 use Claroline\CoreBundle\Entity\Logger\LogWorkspaceWidgetConfig;
+use Claroline\CoreBundle\Entity\Logger\Log;
 use Claroline\CoreBundle\Entity\Logger\LogHiddenWorkspaceWidgetConfig;
+use Claroline\CoreBundle\Entity\Workspace\AbstractWorkspace;
 
 /**
  * Controller of the user profile.
@@ -72,10 +74,8 @@ class LogController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function viewDetailsAction($logId)
+    public function viewDetailsAction(Log $log)
     {
-        $em = $this->getDoctrine()->getManager();
-        $log = $em->getRepository('ClarolineCoreBundle:Logger\Log')->find($logId);
 
         if ($log->getAction() === LogResourceChildUpdateEvent::ACTION ) {
             $eventName = 'create_log_details_'.$log->getResourceType()->getName();
@@ -104,10 +104,9 @@ class LogController extends Controller
      * )
      * @Method("POST")
      */
-    public function updateLogWorkspaceWidgetConfig($workspaceId)
+    public function updateLogWorkspaceWidgetConfig(AbstractWorkspace $workspace)
     {
         $em = $this->getDoctrine()->getManager();
-        $workspace = $em->getRepository('ClarolineCoreBundle:Workspace\AbstractWorkspace')->find($workspaceId);
         $config = $em->getRepository('ClarolineCoreBundle:Logger\LogWorkspaceWidgetConfig')
             ->findOneBy(array('workspace' => $workspace));
 

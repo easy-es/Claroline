@@ -3,6 +3,8 @@
 namespace Claroline\CoreBundle\Controller;
 
 use Claroline\CoreBundle\Entity\Message;
+use Claroline\CoreBundle\Entity\UserMessage;
+use Claroline\CoreBundle\Group;
 use Claroline\CoreBundle\Form\MessageType;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
 use Pagerfanta\Pagerfanta;
@@ -30,10 +32,8 @@ class MessageController extends Controller
      *
      * @return Response
      */
-    public function formForGroupAction($groupId)
+    public function formForGroupAction(Group $group)
     {
-        $em = $this->get('doctrine.orm.entity_manager');
-        $group = $em->find('ClarolineCoreBundle:Group', $groupId);
         $users = $em->getRepository('ClarolineCoreBundle:User')
             ->findByGroup($group);
         $urlParameters = '?';
@@ -99,13 +99,12 @@ class MessageController extends Controller
      *
      * @return Response
      */
-    public function sendAction($parentId)
+    public function sendAction(Message $parent)
     {
         $user = $this->get('security.context')->getToken()->getUser();
         $request = $this->get('request');
         $form = $this->get('form.factory')->create(new MessageType(), new Message());
         $form->handleRequest($request);
-        $parent = $this->get('doctrine.orm.entity_manager')->getRepository('ClarolineCoreBundle:Message')->find($parentId);
 
         if ($form->isValid()) {
             $this->get('claroline.message.manager')->create(
@@ -262,12 +261,11 @@ class MessageController extends Controller
      *
      * @return Response
      */
-    public function showAction($messageId)
+    public function showAction(Message $message)
     {
         $user = $this->get('security.context')->getToken()->getUser();
         $em = $this->get('doctrine.orm.entity_manager');
         $msgRepo = $em->getRepository('ClarolineCoreBundle:Message');
-        $message = $msgRepo->find($messageId);
         $userMessage = $em->getRepository('ClarolineCoreBundle:UserMessage')
             ->findOneBy(array('message' => $message, 'user' => $user));
         $ancestors = $msgRepo->findAncestors($message);
@@ -443,7 +441,7 @@ class MessageController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function markAsReadAction($userMessageId)
+    public function markAsReadAction(UserMessage $userMessage)
     {
         $em = $this->get('doctrine.orm.entity_manager');
         $userMessage = $em->getRepository('ClarolineCoreBundle:UserMessage')

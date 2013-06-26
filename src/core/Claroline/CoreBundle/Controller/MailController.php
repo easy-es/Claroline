@@ -4,6 +4,7 @@ namespace Claroline\CoreBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Claroline\CoreBundle\Form\MailType;
+use Claroline\CoreBundle\Entity\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 class MailController extends Controller
@@ -20,13 +21,13 @@ class MailController extends Controller
      *
      * @return Response
      */
-    public function formAction($userId)
+    public function formAction(User $user)
     {
         $form = $this->createForm(new MailType());
 
         return $this->render(
             'ClarolineCoreBundle:Mail:mail_form.html.twig',
-            array('form' => $form->createView(), 'userId' => $userId)
+            array('form' => $form->createView(), 'userId' => $user)
         );
     }
 
@@ -41,7 +42,7 @@ class MailController extends Controller
      *
      * @return Response
      */
-    public function sendAction($userId)
+    public function sendAction(User $user)
     {
         $request = $this->get('request');
         $form = $this->get('form.factory')->create(new MailType());
@@ -51,7 +52,7 @@ class MailController extends Controller
             $data = $form->getData();
             $user = $this->get('doctrine.orm.entity_manager')
                 ->getRepository('ClarolineCoreBundle:User')
-                ->find($userId);
+                ->find($user);
             $message = \Swift_Message::newInstance()
                 ->setSubject($data['object'])
                 ->setFrom('noreply@claroline.net')
@@ -64,7 +65,7 @@ class MailController extends Controller
 
         return $this->render(
             'ClarolineCoreBundle:Mail:mail_form.html.twig',
-            array('form' => $form->createView(), 'userId' => $userId)
+            array('form' => $form->createView(), 'userId' => $user)
         );
     }
 }

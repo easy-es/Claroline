@@ -21,7 +21,7 @@
                 {% for role in workspace.getRoles() %}
                     {% if has_role_access_to_workspace(role.getName(), workspace.getId()) %}
                         <div class="accordion-inner">
-                            <a href="{{ path('claro_workspace_open', {'workspaceId': workspace.getId()}) }}?view_as={{ role.getName() }}">{{ role.getTranslationKey()|trans({}, 'platform') }}</a>
+                            <a href="{{ path('claro_workspace_open', {'workspace': workspace.getId()}) }}?view_as={{ role.getName() }}">{{ role.getTranslationKey()|trans({}, 'platform') }}</a>
                         </div>
                     {% endif %}
                 {% endfor %}
@@ -29,8 +29,8 @@
         </li>
         {% endif %}
         {% for toolWithTranslation in toolsWithTranslation %}
-        <li{{ path('claro_workspace_open_tool', {'workspaceId': workspace.getId(), 'toolName': toolWithTranslation['tool'].getName()}) | compareRoute | raw }}>
-            <a href="{{ path('claro_workspace_open_tool', {'workspaceId': workspace.getId(), 'toolName': toolWithTranslation['tool'].getName()}) }}">
+        <li{{ path('claro_workspace_open_tool', {'id': workspace.getId(), 'toolName': toolWithTranslation['tool'].getName()}) | compareRoute | raw }}>
+            <a href="{{ path('claro_workspace_open_tool', {'id': workspace.getId(), 'toolName': toolWithTranslation['tool'].getName()}) }}">
                 <i class="{{ toolWithTranslation['tool'].getClass() }}"></i>
                 <span>{{ toolWithTranslation['name'] }}</span>
                 <i class="icon-chevron-right pull-right"></i>

@@ -7,7 +7,7 @@
             {
                 'proximity' : 1,
                 'routeName': 'claro_workspace_registered_group_list',
-                'routeParams': {'workspaceId': workspaceId}
+                'routeParams': {'id': workspaceId}
             }
         )
     }}
@@ -19,7 +19,7 @@
                 {
                     'proximity' : 1,
                     'routeName': 'claro_workspace_registered_group_list_search',
-                    'routeParams': {'search': search, 'workspaceId': workspaceId}
+                    'routeParams': {'search': search, 'workspace': workspaceId}
                 }
             )
         }}
@@ -64,7 +64,7 @@
         <ul class="breadcrumb">
             <li>
             <a href="{{ path('claro_workspace_open_tool',
-                {'workspaceId': workspace.getId(), 'toolName': 'group_management'}) }}">
+                {'workspace': workspace.getId(), 'toolName': 'group_management'}) }}">
                 {{ 'group_management'|trans({}, 'tools') }}
             </a>
             </li>

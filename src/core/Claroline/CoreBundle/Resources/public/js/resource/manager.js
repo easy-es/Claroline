@@ -858,7 +858,7 @@
                                 $.ajax({
                                     url: Routing.generate(
                                         'claro_resource_insert_before',
-                                        {'resourceId': moved, 'nextId': nextId}
+                                        {'id': moved, 'nextId': nextId}
                                     )
                                 });
                             }

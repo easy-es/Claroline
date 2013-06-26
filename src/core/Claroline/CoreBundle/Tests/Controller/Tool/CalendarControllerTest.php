@@ -25,6 +25,7 @@ class CalendarControllerTest extends FunctionalTestCase
         $this->logUser($this->getUser('ws_creator'));
         $this->client->request('GET', "/workspaces/{$workspaceId}/open/tool/calendar");
         $status = $this->client->getResponse()->getStatusCode();
+        var_dump($this->client->getResponse()->getContent());
         $this->assertEquals(200, $status);
 
         $logs = $this->logRepository->findActionAfterDate(

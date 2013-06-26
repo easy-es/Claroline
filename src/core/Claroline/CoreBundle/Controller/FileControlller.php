@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Claroline\CoreBundle\Entity\Resource\File;
 
 class FileControlller extends Controller
 {
@@ -22,10 +23,8 @@ class FileControlller extends Controller
      *
      * @return Response
      */
-    public function getImg($imageId)
+    public function getImg(File $file)
     {
-        $em = $this->get('doctrine.orm.entity_manager');
-        $file = $em->getRepository('ClarolineCoreBundle:Resource\File')->find($imageId);
         $imgpath = $this->container->getParameter('claroline.param.files_directory') . DIRECTORY_SEPARATOR
             . $file->getHashName();
 

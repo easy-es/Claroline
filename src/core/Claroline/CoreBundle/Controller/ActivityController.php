@@ -4,6 +4,7 @@ namespace Claroline\CoreBundle\Controller;
 
 use Claroline\CoreBundle\Entity\Resource\ResourceActivity;
 use Claroline\CoreBundle\Entity\Resource\Activity;
+use Claroline\CoreBundle\Entity\Resource\AbstractResource;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -15,7 +16,7 @@ class ActivityController extends Controller
 {
     /**
      * @Route(
-     *    "/{activityId}/add/resource/{resourceId}",
+     *    "/{id}/add/resource/{resourceId}",
      *    name="claro_activity_add_resource",
           options={"expose"=true}
      * )
@@ -27,17 +28,14 @@ class ActivityController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function addResourceAction($resourceId, $activityId)
+    public function addResourceAction(AbstractResource $resource,AbstractResource $activity)
     {
-        $em = $this->get('doctrine.orm.entity_manager');
-        $repoResource = $em->getRepository('ClarolineCoreBundle:Resource\AbstractResource');
-        $resource = $repoResource->find($resourceId);
-        $activity = $repoResource->find($activityId);
+
         $link = new ResourceActivity();
         $link->setActivity($activity);
         $link->setResource($resource);
         $resourceActivities = $em->getRepository('ClarolineCoreBundle:Resource\ResourceActivity')
-            ->findBy(array('activity' => $activityId));
+            ->findBy(array('activity' => $activity));
         $order = count($resourceActivities);
         $link->setSequenceOrder($order);
         $em->persist($link);
@@ -65,11 +63,9 @@ class ActivityController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function removeResourceAction($resourceId, $activityId)
+    public function removeResourceAction(ResourceActivity $resource,ResourceActivity $activity)
     {
-        $em = $this->get('doctrine.orm.entity_manager');
-        $repo = $em->getRepository('ClarolineCoreBundle:Resource\ResourceActivity');
-        $resourceActivity = $repo->findOneBy(array('resource' => $resourceId, 'activity' => $activityId));
+        $resourceActivity = $repo->findOneBy(array('resource' => $resource, 'activity' => $activity));
         $em->remove($resourceActivity);
         $em->flush();
 
@@ -90,11 +86,10 @@ class ActivityController extends Controller
      * 
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function setSequenceOrderAction($activityId)
+    public function setSequenceOrderAction(ResourceActivity $activity)
     {
-        $em = $this->get('doctrine.orm.entity_manager');
         $resourceActivities = $em->getRepository('ClarolineCoreBundle:Resource\ResourceActivity')
-            ->findBy(array('activity' => $activityId));
+            ->findBy(array('activity' => $activity));
         $params = $this->get('request')->query->all();
 
         foreach ($resourceActivities as $resourceActivity) {
@@ -125,11 +120,9 @@ class ActivityController extends Controller
      *
      * @return Response
      */
-    public function renderLeftMenuAction($activityId)
+    public function renderLeftMenuAction(Activity $activity)
     {
-        $em = $this->get('doctrine.orm.entity_manager');
-        $activity = $em->getRepository('ClarolineCoreBundle:Resource\Activity')
-            ->find($activityId);
+
         $resourceActivities = $em->getRepository('ClarolineCoreBundle:Resource\ResourceActivity')
             ->findResourceActivities($activity);
         $totalSteps = $this->countSteps($activity, 0);
@@ -161,11 +154,8 @@ class ActivityController extends Controller
      *
      * @return Response
      */
-    public function showPlayerAction($activityId)
+    public function showPlayerAction(Activity $activity)
     {
-        $em = $this->get('doctrine.orm.entity_manager');
-        $activity = $em->getRepository('ClarolineCoreBundle:Resource\Activity')
-            ->find($activityId);
         $resourceActivities = $em->getRepository('ClarolineCoreBundle:Resource\ResourceActivity')
             ->findResourceActivities($activity);
 
@@ -183,18 +173,14 @@ class ActivityController extends Controller
      *     "/instructions/{activityId}",
      *     name="claro_activity_show_instructions"
      * )
-
      * Show the instructions of an activity.
      *
      * @param type $activityId the activity id
      *
      * @return Response
      */
-    public function showInstructionsAction($activityId)
+    public function showInstructionsAction($activity)
     {
-        $activity = $this->get('doctrine.orm.entity_manager')
-            ->getRepository('ClarolineCoreBundle:Resource\Activity')
-            ->find($activityId);
 
         return $this->render(
             'ClarolineCoreBundle:Activity\player:instructions.html.twig',

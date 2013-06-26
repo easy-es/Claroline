@@ -26,7 +26,7 @@
                         {% set granted = has_access_to_workspace(workspace.getId(), app.security.getToken()) %}
                         {% if granted == true %}
                         <a href="{{ path('claro_workspace_open',
-                           {'workspaceId': workspace.getId(), 'toolName': 'home'}) }}"
+                           {'workspace': workspace.getId(), 'toolName': 'home'}) }}"
                            id="link-home-{{ workspace.getId() }}"
                         >
                         {% endif %}
@@ -82,7 +82,7 @@
                             {% set granted = has_access_to_workspace(workspace.getId(), app.security.getToken()) %}
                             {% if granted == true %}
                             <a href="{{ path('claro_workspace_open',
-                               {'workspaceId': workspace.getId()}) }}"
+                               {'workspace': workspace.getId()}) }}"
                                id="link-home-{{ workspace.getId() }}"
                             >
                             {% endif %}

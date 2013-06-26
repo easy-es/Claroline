@@ -9,12 +9,15 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Claroline\CoreBundle\Entity\Workspace\WorkspaceTag;
+use Claroline\CoreBundle\Entity\Workspace\AbstractWorkspace;
 use Claroline\CoreBundle\Form\WorkspaceType;
 use Claroline\CoreBundle\Library\Workspace\Configuration;
 use Claroline\CoreBundle\Library\Event\DisplayToolEvent;
 use Claroline\CoreBundle\Library\Event\DisplayWidgetEvent;
 use Claroline\CoreBundle\Library\Event\LogWorkspaceToolReadEvent;
 use Claroline\CoreBundle\Library\Event\LogWorkspaceDeleteEvent;
+
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 /**
  * This controller is able to:
@@ -241,10 +244,9 @@ class WorkspaceController extends Controller
      *
      * @return Response
      */
-    public function deleteAction($workspaceId)
+    public function deleteAction(AbstractWorkspace $workspace)
     {
         $em = $this->get('doctrine.orm.entity_manager');
-        $workspace = $em->getRepository(self::ABSTRACT_WS_CLASS)->find($workspaceId);
         $this->assertIsGranted('DELETE', $workspace);
         $log = new LogWorkspaceDeleteEvent($workspace);
         $this->get('event_dispatcher')->dispatch('log', $log);
@@ -319,24 +321,24 @@ class WorkspaceController extends Controller
 
     /**
      * @Route(
-     *     "/{workspaceId}/open/tool/{toolName}",
+     *     "/{id}/open/tool/{toolName}",
      *     name="claro_workspace_open_tool",
      *     options={"expose"=true}
      * )
      * @Method("GET")
-     *
+     * 
      * Opens a tool.
      *
      * @param type $toolName
      * @param type $workspaceId
-     *
+     * 
      * @return Response
      */
-    public function openToolAction($toolName, $workspaceId)
+    public function openToolAction(AbstractWorkspace $workspace, $toolName)
     {
-        $em = $this->get('doctrine.orm.entity_manager');
-        $workspace = $em->getRepository('ClarolineCoreBundle:Workspace\AbstractWorkspace')
-            ->find($workspaceId);
+//       $em = $this->get('doctrine.orm.entity_manager');
+//       $workspace = $em->getRepository('ClarolineCoreBundle:Workspace\AbstractWorkspace')
+//           ->find($workspaceId);
         $this->assertIsGranted($toolName, $workspace);
         $event = new DisplayToolEvent($workspace);
         $eventName = 'open_tool_workspace_'.$toolName;
@@ -356,7 +358,7 @@ class WorkspaceController extends Controller
 
     /**
      * @Route(
-     *     "/{workspaceId}/widgets",
+     *     "/{id}/widgets",
      *     name="claro_workspace_widgets"
      * )
      * @Method("GET")
@@ -369,15 +371,15 @@ class WorkspaceController extends Controller
      *
      * @todo Reduce the number of sql queries for this action (-> dql)
      */
-    public function widgetsAction($workspaceId)
+    public function widgetsAction(AbstractWorkspace $workspace)
     {
         // No right checking is done : security is delegated to each widget renderer
         // Is that a good idea ?
         $responsesString = '';
         $configs = $this->get('claroline.widget.manager')
-            ->generateWorkspaceDisplayConfig($workspaceId);
-        $em = $this->getDoctrine()->getManager();
-        $workspace = $em->getRepository(self::ABSTRACT_WS_CLASS)->find($workspaceId);
+            ->generateWorkspaceDisplayConfig($workspace->getId());
+
+
 
         foreach ($configs as $config) {
             if ($config->isVisible()) {
@@ -402,7 +404,7 @@ class WorkspaceController extends Controller
 
     /**
      * @Route(
-     *     "/{workspaceId}/open",
+     *     "/{workspace}/open",
      *     name="claro_workspace_open"
      * )
      * @Method("GET")
@@ -413,11 +415,9 @@ class WorkspaceController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function openAction($workspaceId)
+    public function openAction(AbstractWorkspace $workspace)
     {
         $em = $this->getDoctrine()->getManager();
-        $workspace = $em->getRepository(self::ABSTRACT_WS_CLASS)->find($workspaceId);
-
         if ('anon.' != $this->get('security.context')->getToken()->getUser()) {
             $roles = $em->getRepository('ClarolineCoreBundle:Role')->findByWorkspace($workspace);
             $foundRole = null;
@@ -457,7 +457,7 @@ class WorkspaceController extends Controller
 
         $route = $this->get('router')->generate(
             'claro_workspace_open_tool',
-            array('workspaceId' => $workspaceId, 'toolName' => $openedTool[0]->getName())
+            array('id' => $workspace->getId(), 'toolName' => $openedTool[0]->getName())
         );
 
         return new RedirectResponse($route);

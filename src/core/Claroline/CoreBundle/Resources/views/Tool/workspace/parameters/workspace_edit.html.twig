@@ -11,7 +11,7 @@
         macros.breadcrumbs([
             {
                 'name': 'parameters'|trans({}, 'platform'),
-                'href': path('claro_workspace_open_tool', {'workspaceId': workspace.getId(), 'toolName': 'parameters'})
+                'href': path('claro_workspace_open_tool', {'id': workspace.getId(), 'toolName': 'parameters'})
             },
             {
                 'name': 'general'|trans({}, 'platform'),
@@ -37,7 +37,7 @@
             {{ form_widget(form) }}
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary">{{ 'ok'|trans({}, 'platform') }}</button>
-                <a href="{{ path('claro_workspace_open_tool', {'workspaceId': workspace.getId(), 'toolName': 'parameters'}) }}">
+                <a href="{{ path('claro_workspace_open_tool', {'workspace': workspace.getId(), 'toolName': 'parameters'}) }}">
                     <button type="button" class="btn">{{ 'cancel'|trans({}, 'platform') }}</button>
                 </a>
             </div>

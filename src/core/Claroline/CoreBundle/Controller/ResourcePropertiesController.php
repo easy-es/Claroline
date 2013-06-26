@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Claroline\CoreBundle\Entity\Resource\IconType;
+use Claroline\CoreBundle\Entity\Resource\AbstractResource;
 use Claroline\CoreBundle\Form\ResourcePropertiesType;
 use Claroline\CoreBundle\Form\ResourceNameType;
 use Claroline\CoreBundle\Library\Resource\ResourceCollection;
@@ -28,12 +29,8 @@ class ResourcePropertiesController extends Controller
      *
      * @return Response
      */
-    public function renameFormAction($resourceId)
+    public function renameFormAction(AbstractResource $resource)
     {
-        $resource = $this->getDoctrine()
-            ->getManager()
-            ->getRepository('ClarolineCoreBundle:Resource\AbstractResource')
-            ->find($resourceId);
         $collection = new ResourceCollection(array($resource));
         $this->checkAccess('EDIT', $collection);
         $form = $this->createForm(new ResourceNameType(), $resource);
@@ -57,12 +54,9 @@ class ResourcePropertiesController extends Controller
      *
      * @return Response
      */
-    public function renameAction($resourceId)
+    public function renameAction(AbstractResource $resource)
     {
         $request = $this->get('request');
-        $em = $this->getDoctrine()->getManager();
-        $resource = $em->getRepository('ClarolineCoreBundle:Resource\AbstractResource')
-            ->find($resourceId);
         $collection = new ResourceCollection(array($resource));
         $this->checkAccess('EDIT', $collection);
         $form = $this->createForm(new ResourceNameType(), $resource);
@@ -104,13 +98,8 @@ class ResourcePropertiesController extends Controller
      *
      * @return Response
      */
-    public function propertiesFormAction($resourceId)
+    public function propertiesFormAction(AbstractResource $resource)
     {
-        $resource = $this->getDoctrine()
-            ->getManager()
-            ->getRepository('ClarolineCoreBundle:Resource\AbstractResource')
-            ->find($resourceId);
-
         $form = $this->createForm(new ResourcePropertiesType(), $resource);
 
         return $this->render(
@@ -132,12 +121,10 @@ class ResourcePropertiesController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\StreamedResponse
      */
-    public function changePropertiesAction($resourceId)
+    public function changePropertiesAction(AbstractResource $resource)
     {
         $request = $this->get('request');
         $em = $this->get('doctrine.orm.entity_manager');
-        $resource = $em->getRepository('ClarolineCoreBundle:Resource\AbstractResource')
-            ->find($resourceId);
 
         if (!$this->get('security.context')->getToken()->getUser() === $resource->getCreator()) {
              throw new AccessDeniedException("You're not the owner of this resource");

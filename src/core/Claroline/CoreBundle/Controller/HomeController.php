@@ -34,7 +34,7 @@ class HomeController extends Controller
      * @return \Symfony\Component\HttpFoundation\Response
      * @see Claroline\CoreBundle\Library\Home\HomeService()
      */
-    public function contentAction($id, $type = "default", $father = null)
+    public function contentAction(Content $id, $type = "default", $father = null)
     {
         $variables = array(
             "type" => $type,
@@ -42,8 +42,6 @@ class HomeController extends Controller
         );
 
         $manager = $this->getDoctrine()->getManager();
-
-        $content = $manager->getRepository("ClarolineCoreBundle:Home\Content")->find($id);
         $type = $manager->getRepository("ClarolineCoreBundle:Home\Type")->findOneBy(array('name' => $type));
 
         if ($content) {
@@ -281,11 +279,9 @@ class HomeController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function updateAction($id)
+    public function updateAction(Content $content)
     {
         $manager = $this->getDoctrine()->getManager();
-
-        $content = $manager->getRepository("ClarolineCoreBundle:Home\Content")->findOneBy(array('id' => $id));
 
         $request = $this->get('request');
 

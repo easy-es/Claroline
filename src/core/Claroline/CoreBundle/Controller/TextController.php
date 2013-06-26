@@ -5,6 +5,7 @@ namespace Claroline\CoreBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Claroline\CoreBundle\Entity\Resource\Revision;
+use Claroline\CoreBundle\Entity\Resource\Text;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
@@ -154,10 +155,8 @@ class TextController extends Controller
      *
      * @return type
      */
-    public function historyAction($textId)
+    public function historyAction(Text $text)
     {
-        $em = $this->getDoctrine()->getManager();
-        $text = $em->getRepository('ClarolineCoreBundle:Resource\Text')->find($textId);
         $revisions = $text->getRevisions();
         $size = count($revisions);
         $size--;
@@ -201,11 +200,9 @@ class TextController extends Controller
      *
      * @return Response
      */
-    public function editFormAction($textId)
+    public function editFormAction(Text $text)
     {
-        $textRepo = $this->container->get('doctrine.orm.entity_manager')
-            ->getRepository('ClarolineCoreBundle:Resource\Text');
-        $text = $textRepo->find($textId);
+        $textRepo = $this->container->get('doctrine.orm.entity_manager');
 
         return $this->render(
             'ClarolineCoreBundle:Text:edit.html.twig',
@@ -228,14 +225,13 @@ class TextController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function editAction($textId)
+    public function editAction(Text $old)
     {
 
         $request = $this->get('request');
         $user = $this->get('security.context')->getToken()->getUser();
         $text = $request->request->get('content');
         $em = $this->getDoctrine()->getManager();
-        $old = $em->getRepository('ClarolineCoreBundle:Resource\Text')->find($textId);
         $version = $old->getVersion();
         $revision = new Revision();
         $revision->setContent($text);
