@@ -413,7 +413,7 @@ class WorkspaceController extends Controller
         return array(
             'widgets' => $widgets,
             'isDesktop' => false,
-            'workspaceId' => $workspaceId
+            'workspaceId' => $workspace->getId()
         );
     }
 

@@ -64,7 +64,7 @@ class ToolListener
         $workspaceId = $event->getWorkspace()->getId();
         $response = $this->forward(
             'ClarolineCoreBundle:Tool\Group:registeredGroupsList',
-            array('workspaceId' => $workspaceId, 'page' => 1, 'search' => '')
+            array('id' => $workspaceId, 'page' => 1, 'search' => '')
         );
         $event->setContent($response->getContent());
     }

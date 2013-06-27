@@ -22,7 +22,7 @@
                 i++;
             });
             parameters.ids = array;
-            var route = Routing.generate('claro_workspace_multiadd_group', {'workspaceId': twigWorkspaceId});
+            var route = Routing.generate('claro_workspace_multiadd_group', {'id': twigWorkspaceId});
             route += '?' + $.param(parameters);
             $('#adding').show();
             $.ajax({

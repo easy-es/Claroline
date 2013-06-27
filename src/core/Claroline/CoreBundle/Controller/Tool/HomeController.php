@@ -138,7 +138,7 @@ class HomeController extends Controller
 
     /**
      * @Route(
-     *     "/{workspace}/widget/{widget}/configuration",
+     *     "/{id}/widget/{widget}/configuration",
      *     name="claro_workspace_widget_configuration",
      *     options={"expose"=true}
      * )

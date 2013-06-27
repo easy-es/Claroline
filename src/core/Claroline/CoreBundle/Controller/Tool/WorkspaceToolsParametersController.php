@@ -259,20 +259,10 @@ class WorkspaceToolsParametersController extends AbstractParametersController
         $WorkspaceOrderTool = $em->getRepository('ClarolineCoreBundle:Tool\WorkspaceOrderedTool')->find($workspaceOrderToolId);
         $form = $this->createForm(new WorkspaceOrderToolEditType(), $WorkspaceOrderTool);
 
-<<<<<<< HEAD
-        return $this->render(
-            'ClarolineCoreBundle:Tool\workspace\parameters:workspace_order_tool_edit.html.twig',
-            array('form' => $form->createView(), 'workspace' => $workspace, 'wot' => $WorkspaceOrderTool)
-||||||| merged common ancestors
-        return $this->render(
-            'ClarolineCoreBundle:Tool\workspace\parameters:workspace_order_tool_edit.html.twig',
-            array('form' => $form->createView(), 'workspace' => $workspace, 'wot' => $wot)
-=======
         return array(
             'form' => $form->createView(),
             'workspace' => $workspace,
             'wot' => $wot
->>>>>>> c781053ab242327ed177c0ddf71709c274c414c9
         );
     }
 

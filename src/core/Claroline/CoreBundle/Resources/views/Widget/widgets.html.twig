@@ -30,7 +30,7 @@
                             </a>
                         {% else %}
                             <a 
-                                href="{{ path('claro_workspace_widget_configuration', {'workspace': workspaceId, 'widget': widget.id}) }}"
+                                href="{{ path('claro_workspace_widget_configuration', {'id': workspaceId, 'widget': widget.id}) }}"
                                 class="pull-right"
                                 id="edit-widget{{ widget.id }}">
                                 <i class="icon-edit"></i> {{ 'edit'|trans({}, 'platform') }}

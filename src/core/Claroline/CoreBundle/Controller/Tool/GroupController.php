@@ -24,7 +24,7 @@ class GroupController extends Controller
 
     /**
      * @Route(
-     *     "/{workspace}/groups/registered/page/{page}",
+     *     "/{id}/groups/registered/page/{page}",
      *     name="claro_workspace_registered_group_list",
      *     defaults={"page"=1, "search"=""},
      *     options = {"expose"=true}
@@ -33,7 +33,7 @@ class GroupController extends Controller
      * @Method("GET")
      *
      * @Route(
-     *     "/{workspace}/groups/registered/page/{page}/search/{search}",
+     *     "/{id}/groups/registered/page/{page}/search/{search}",
      *     name="claro_workspace_registered_group_list_search",
      *     defaults={"page"=1},
      *     options = {"expose"=true}
@@ -45,7 +45,7 @@ class GroupController extends Controller
      */
     public function registeredGroupsListAction(AbstractWorkspace $workspace, $page, $search)
     {
-        
+        $em = $this->get('doctrine.orm.entity_manager');
         $this->checkRegistration($workspace);
         $repo = $em->getRepository('ClarolineCoreBundle:Group');
         $query = ($search == "") ?
@@ -61,7 +61,7 @@ class GroupController extends Controller
 
     /**
      * @Route(
-     *     "/{workspace}/groups/unregistered/page/{page}",
+     *     "/{id}/groups/unregistered/page/{page}",
      *     name="claro_workspace_unregistered_group_list",
      *     defaults={"page"=1, "search"=""},
      *     options = {"expose"=true}
@@ -70,7 +70,7 @@ class GroupController extends Controller
      * @Method("GET")
      *
      * @Route(
-     *     "/{workspace}/groups/unregistered/page/{page}/search/{search}",
+     *     "/{id}/groups/unregistered/page/{page}/search/{search}",
      *     name="claro_workspace_unregistered_group_list_search",
      *     defaults={"page"=1},
      *     options = {"expose"=true}
@@ -82,6 +82,7 @@ class GroupController extends Controller
      */
     public function unregiseredGroupsListAction(AbstractWorkspace $workspace, $page, $search)
     {
+        $em = $this->get('doctrine.orm.entity_manager');
         $this->checkRegistration($workspace, false);
         $repo = $em->getRepository('ClarolineCoreBundle:Group');
         $query = ($search == "") ?
@@ -97,14 +98,14 @@ class GroupController extends Controller
 
     /**
      * @Route(
-     *     "/{workspace}/tools/group/{group}",
+     *     "/{id}/tools/group/{group}",
      *     name="claro_workspace_tools_show_group_parameters",
      *     options={"expose"=true},
      *     requirements={"workspaceId"="^(?=.*[1-9].*$)\d*$", "groupId"="^(?=.*[1-9].*$)\d*$"}
      * )
      *
      * @Route(
-     *     "/{workspaceId}/group/{groupId}",
+     *     "/{id}/group/{groupId}",
      *     name="claro_workspace_tools_edit_group_parameters",
      *     options={"expose"=true},
      *     requirements={"workspaceId"="^(?=.*[1-9].*$)\d*$", "groupId"="^(?=.*[1-9].*$)\d*$" }
@@ -187,7 +188,7 @@ class GroupController extends Controller
 
     /**
      * @Route(
-     *     "/{workspaceId}/groups",
+     *     "/{id}/groups",
      *     name="claro_workspace_delete_groups",
      *     options={"expose"=true},
      *     requirements={"workspaceId"="^(?=.*[1-9].*$)\d*$"}
@@ -243,10 +244,10 @@ class GroupController extends Controller
 
     /**
      * @Route(
-     *     "/{workspaceId}/add/group",
+     *     "/{id}/add/group",
      *     name="claro_workspace_multiadd_group",
      *     options={"expose"=true},
-     *     requirements={"workspaceId"="^(?=.*[1-9].*$)\d*$"}
+     *     requirements={"id"="^(?=.*[1-9].*$)\d*$"}
      * )
      * @Method("PUT")
      *

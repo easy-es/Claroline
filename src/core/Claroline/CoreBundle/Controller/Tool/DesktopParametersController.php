@@ -51,7 +51,7 @@ class DesktopParametersController extends Controller
 
     /**
      * @Route(
-     *     "/remove/tool/{tool}",
+     *     "/remove/tool/{id}",
      *     name="claro_tool_desktop_remove",
      *     options={"expose"=true}
      * )
@@ -84,7 +84,7 @@ class DesktopParametersController extends Controller
 
     /**
      * @Route(
-     *     "/add/tool/{tool}/position/{position}",
+     *     "/add/tool/{id}/position/{position}",
      *     name="claro_tool_desktop_add",
      *     options={"expose"=true}
      * )
@@ -119,7 +119,7 @@ class DesktopParametersController extends Controller
 
     /**
      * @Route(
-     *     "/move/tool/{tool}/position/{position}",
+     *     "/move/tool/{id}/position/{position}",
      *     name="claro_tool_desktop_move",
      *     options={"expose"=true}
      * )
@@ -170,7 +170,7 @@ class DesktopParametersController extends Controller
 
     /**
      * @Route(
-     *     "tool/{tool}/config",
+     *     "tool/{id}/config",
      *     name="claro_desktop_tool_config"
      * )
      * @Method("GET")

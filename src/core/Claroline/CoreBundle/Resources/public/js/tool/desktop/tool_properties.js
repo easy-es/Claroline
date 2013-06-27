@@ -26,12 +26,12 @@
         if (isCurrentRowChecked) {
             route = Routing.generate(
                 'claro_tool_desktop_add',
-                { 'tool': toolId, 'position': rowIndex }
+                { 'id': toolId, 'position': rowIndex }
             );
         } else {
             route = Routing.generate(
                 'claro_tool_desktop_remove',
-                { 'tool': toolId }
+                { 'id': toolId }
             );
         }
 

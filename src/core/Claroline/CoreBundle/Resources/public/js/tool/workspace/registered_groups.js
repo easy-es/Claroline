@@ -23,7 +23,7 @@
             });
 
             parameters.ids = array;
-            var route = Routing.generate('claro_workspace_delete_groups', {'workspaceId': twigWorkspaceId});
+            var route = Routing.generate('claro_workspace_delete_groups', {'id': twigWorkspaceId});
             route += '?' + $.param(parameters);
             $.ajax({
                 url: route,
@@ -63,7 +63,7 @@
         $('.button-parameters-group').live('click', function () {
             var route = Routing.generate(
                 'claro_workspace_tools_show_group_parameters',
-                {'groupId': $(this).parent().parent().attr('data-group-id'), 'workspaceId': twigWorkspaceId}
+                {'groupId': $(this).parent().parent().attr('data-group-id'), 'id': twigWorkspaceId}
             );
 
             window.location.href = route;
