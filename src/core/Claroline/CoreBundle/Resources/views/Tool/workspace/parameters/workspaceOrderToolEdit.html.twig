@@ -6,11 +6,11 @@
         macros.breadcrumbs([
             {
                 'name': 'parameters'|trans({}, 'platform'),
-                'href': path('claro_workspace_open_tool', {'workspace': workspace.getId(), 'toolName': 'parameters'})
+                'href': path('claro_workspace_open_tool', {'id': workspace.getId(), 'toolName': 'parameters'})
             },
             {
                 'name': 'tools'|trans({}, 'platform'),
-                'href': path('claro_workspace_tools_roles', {'workspaceId': workspace.getId()})
+                'href': path('claro_workspace_tools_roles', {'id': workspace.getId()})
             },
             {
                 'name': 'edit'|trans({}, 'platform'),
@@ -19,7 +19,7 @@
         ])
     }}
 
-    <form class="form-horizontal" action="{{ path('claro_workspace_order_tool_edit', {'workspaceId': workspace.getId(), 'workspaceOrderToolId': wot.getId()}) }}" method="post" {{ form_enctype(form) }}>
+    <form class="form-horizontal" action="{{ path('claro_workspace_order_tool_edit', {'id': workspace.getId(), 'workspaceOrderToolId': wot.getId()}) }}" method="post" {{ form_enctype(form) }}>
         <fieldset>
             {{ form_widget(form) }}
             <div class="form-actions">

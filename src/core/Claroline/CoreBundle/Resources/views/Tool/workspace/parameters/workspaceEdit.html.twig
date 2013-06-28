@@ -26,18 +26,18 @@
             {{ 'workspace_delete'|trans({}, 'platform') }}
         </a>
         {% endif %}
-            <a href="{{ path('claro_workspace_export_form', {'workspace': workspace.getId() }) }}" class='btn'>
+            <a href="{{ path('claro_workspace_export_form', {'id': workspace.getId() }) }}" class='btn'>
                 {{ 'save_as_template'|trans({}, 'platform') }}
             </a>
     </div>
     <br>
 
-    <form class="form-horizontal" action="{{ path('claro_workspace_edit', {'workspace': workspace.getId()}) }}" method="post" {{ form_enctype(form) }}>
+    <form class="form-horizontal" action="{{ path('claro_workspace_edit', {'id': workspace.getId()}) }}" method="post" {{ form_enctype(form) }}>
         <fieldset>
             {{ form_widget(form) }}
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary">{{ 'ok'|trans({}, 'platform') }}</button>
-                <a href="{{ path('claro_workspace_open_tool', {'workspace': workspace.getId(), 'toolName': 'parameters'}) }}">
+                <a href="{{ path('claro_workspace_open_tool', {'id': workspace.getId(), 'toolName': 'parameters'}) }}">
                     <button type="button" class="btn">{{ 'cancel'|trans({}, 'platform') }}</button>
                 </a>
             </div>

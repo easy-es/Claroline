@@ -18,7 +18,7 @@ class WorkspaceParametersController extends AbstractParametersController
 {
     /**
      * @Route(
-     *     "/{workspace}/form/export",
+     *     "/{id}/form/export",
      *     name="claro_workspace_export_form"
      * )
      * @Method("GET")
@@ -42,7 +42,7 @@ class WorkspaceParametersController extends AbstractParametersController
 
     /**
      * @Route(
-     *     "/{workspace}/export",
+     *     "/{id}/export",
      *     name="claro_workspace_export"
      * )
      * @Method("POST")
@@ -79,7 +79,7 @@ class WorkspaceParametersController extends AbstractParametersController
 
     /**
      * @Route(
-     *     "/{workspace}/editform",
+     *     "/{id}/editform",
      *     name="claro_workspace_edit_form"
      * )
      * @Method("GET")
@@ -104,7 +104,7 @@ class WorkspaceParametersController extends AbstractParametersController
 
     /**
      * @Route(
-     *     "/{workspace}/edit",
+     *     "/{id}/edit",
      *     name="claro_workspace_edit"
      * )
      * @Method("POST")
@@ -155,7 +155,7 @@ class WorkspaceParametersController extends AbstractParametersController
 
     /**
      * @Route(
-     *     "/{workspace}/tool/{tool}/config",
+     *     "/{id}/tool/{tool}/config",
      *     name="claro_workspace_tool_config"
      * )
      * @Method("GET")
@@ -165,10 +165,11 @@ class WorkspaceParametersController extends AbstractParametersController
      *
      * @return Response
      */
-    public function openWorkspaceToolConfig(AbstractWorkspace $workspace, Tool $tool)
+    public function openWorkspaceToolConfig(AbstractWorkspace $workspace, $toolId)
     {
         $this->checkAccess($workspace);
-
+        $em = $this->get('doctrine.orm.entity_manager');
+        $tool = $em->getRepository('ClarolineCoreBundle:Tool\Tool')->find($toolId);
         $event = new ConfigureWorkspaceToolEvent($tool, $workspace);
         $eventName = strtolower('configure_workspace_tool_' . $tool->getName());
         $this->get('event_dispatcher')->dispatch($eventName, $event);

@@ -59,7 +59,7 @@
                 
                 if( mimeArray.indexOf(mimeType) > -1)
                 {
-                    tinyMCE.execCommand('mceInsertRawHTML', false, '<img src="' + Routing.generate('claro_file_get_image', {'imageId': id}) + '" alt ="'+resourceId+' width="200" height="100"/>');
+                    tinyMCE.execCommand('mceInsertRawHTML', false, '<img src="' + Routing.generate('claro_file_get_image', {'id': id}) + '" alt ="'+resourceId+' width="200" height="100"/>');
                 }
                 else
                 {

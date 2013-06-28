@@ -1,4 +1,4 @@
-{% macro renderPager(search, workspaceId, pager) %}
+{% macro renderPager(search, workspace , pager) %}
     {% if search == '' %}
     {{
         pagerfanta(
@@ -7,7 +7,7 @@
             {
                 'proximity' : 1,
                 'routeName': 'claro_workspace_registered_user_list',
-                'routeParams': {'workspaceId': workspaceId}
+                'routeParams': {'id': workspace.getId()}
             }
         )
     }}
@@ -19,14 +19,14 @@
                 {
                     'proximity' : 1,
                     'routeName': 'claro_workspace_registered_user_list_search',
-                    'routeParams': {'search': search, 'workspaceId': workspaceId}
+                    'routeParams': {'search': search, 'id': workspace.getId()}
                 }
             )
         }}
     {% endif %}
 {% endmacro %}
 
-{% macro displayControls(workspaceId) %}
+{% macro displayControls(workspace) %}
     {% if app.user %}
         <button id="delete-user-button"
                 class="btn btn-secondary delete-users-button">
@@ -34,7 +34,7 @@
             {{ 'delete'|trans({}, 'platform') }}
         </button>
         <a class="btn btn-secondary"
-           href="{{ path('claro_workspace_unregistered_user_list', {'workspaceId': workspaceId}) }}"
+           href="{{ path('claro_workspace_unregistered_user_list', {'id': workspace.getId()}) }}"
            id="add-user-link">
             <i class="icon-plus"></i>
             {{ 'add_user'|trans({}, 'platform') }}

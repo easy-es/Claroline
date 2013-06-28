@@ -419,7 +419,7 @@ class WorkspaceController extends Controller
 
     /**
      * @Route(
-     *     "/{workspace}/open",
+     *     "/{id}/open",
      *     name="claro_workspace_open"
      * )
      * @Method("GET")

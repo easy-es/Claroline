@@ -37,7 +37,7 @@
                 i++;
             });
             parameters.ids = array;
-            var route = Routing.generate('claro_workspace_multiadd_user', {'workspaceId': twigWorkspaceId});
+            var route = Routing.generate('claro_workspace_multiadd_user', {'id': twigWorkspaceId});
             route += '?' + $.param(parameters);
             $.ajax({
                 url: route,

@@ -20,7 +20,7 @@ class WorkspaceToolsParametersController extends AbstractParametersController
 {
     /**
      * @Route(
-     *     "/{workspaceId}/tools",
+     *     "/{id}/tools",
      *     name="claro_workspace_tools_roles"
      * )
      * @Method("GET")
@@ -29,6 +29,7 @@ class WorkspaceToolsParametersController extends AbstractParametersController
      */
     public function workspaceToolsRolesAction(AbstractWorkspace $workspace)
     {
+        $em = $this->get('doctrine.orm.entity_manager');
         $this->checkAccess($workspace);
         $wsRoles = $em->getRepository('ClarolineCoreBundle:Role')->findByWorkspace($workspace);
         $anonRole = $em->getRepository('ClarolineCoreBundle:Role')->findBy(array('name' => 'ROLE_ANONYMOUS'));
@@ -96,7 +97,7 @@ class WorkspaceToolsParametersController extends AbstractParametersController
 
     /**
      * @Route(
-     *     "/remove/tool/{toolId}/workspace/{workspaceId}/role/{roleId}",
+     *     "/remove/tool/{toolId}/workspace/{id}/role/{roleId}",
      *     name="claro_tool_workspace_remove",
      *     options={"expose"=true}
      * )
@@ -112,8 +113,11 @@ class WorkspaceToolsParametersController extends AbstractParametersController
      *
      * @throws \Exception
      */
-    public function workspaceRemoveToolAction(WorkspaceOrderedTool $tool, WorkspaceToolRole $role, AbstractWorkspace $workspace)
+    public function workspaceRemoveToolAction($toolId, $roleId, AbstractWorkspace $workspace)
     {
+        $em = $this->get('doctrine.orm.entity_manager');
+        $role = $em->getRepository('ClarolineCoreBundle:Tool\WorkspaceToolRole')->findBy($roleId);
+        $tool = $em->getRepository('ClarolineCoreBundle:Tool\WorkspaceOrderedTool')->findBy($toolId);
         $this->checkAccess($workspace);
         $wot = $em->getRepository('ClarolineCoreBundle:Tool\WorkspaceOrderedTool')
             ->findOneBy(array('workspace' => $workspace, 'tool' => $tool));
@@ -128,7 +132,7 @@ class WorkspaceToolsParametersController extends AbstractParametersController
 
     /**
      * @Route(
-     *     "/add/tool/{toolId}/position/{position}/workspace/{workspaceId}/role/{roleId}",
+     *     "/add/tool/{toolId}/position/{position}/workspace/{id}/role/{roleId}",
      *     name="claro_tool_workspace_add",
      *     options={"expose"=true}
      * )
@@ -145,10 +149,12 @@ class WorkspaceToolsParametersController extends AbstractParametersController
      *
      * @throws \Exception
      */
-    public function workspaceAddToolAction(Tool $tool,Role $role,AbstractWorkspace $workspace, $position)
+    public function workspaceAddToolAction($toolId, $roleId, AbstractWorkspace $workspace, $position)
     {
         $em = $this->get('doctrine.orm.entity_manager');
         $this->checkAccess($workspace);
+        $role = $em->getRepository('ClarolineCoreBundle:Tool\WorkspaceToolRole')->findBy($roleId);
+        $tool = $em->getRepository('ClarolineCoreBundle:Tool\WorkspaceOrderedTool')->findBy($toolId);
         $wot = $em->getRepository('ClarolineCoreBundle:Tool\WorkspaceOrderedTool')
             ->findOneBy(array('workspace' => $workspace, 'tool' => $tool));
 
@@ -176,7 +182,7 @@ class WorkspaceToolsParametersController extends AbstractParametersController
 
     /**
      * @Route(
-     *     "/move/tool/{toolId}/position/{position}/workspace/{workspaceId}",
+     *     "/move/tool/{toolId}/position/{position}/workspace/{id}",
      *     name="claro_tool_workspace_move",
      *     options={"expose"=true}
      * )
@@ -189,7 +195,7 @@ class WorkspaceToolsParametersController extends AbstractParametersController
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function workspaceMoveToolAction(Tool $tool, $position,AbstractWorkspace $workspace)
+    public function workspaceMoveToolAction($toolId, $position,AbstractWorkspace $workspace)
     {
         if (intval($position) == null) {
             throw new \RuntimeException('The $position value must be an integer');
@@ -239,7 +245,7 @@ class WorkspaceToolsParametersController extends AbstractParametersController
 
     /**
      * @Route(
-     *     "/{workspaceId}/tools/{workspaceOrderToolId}/editform",
+     *     "/{id}/tools/{workspaceOrderToolId}/editform",
      *     name="claro_workspace_order_tool_edit_form"
      * )
      * @Method("GET")
@@ -252,8 +258,7 @@ class WorkspaceToolsParametersController extends AbstractParametersController
      * @return Response
      */
     public function workspaceOrderToolEditFormAction(AbstractWorkspace $workspace,WorkspaceOrderedTool $workspaceOrder)
-    {
-       
+    {       
        
         $this->checkAccess($workspace);
         $WorkspaceOrderTool = $em->getRepository('ClarolineCoreBundle:Tool\WorkspaceOrderedTool')->find($workspaceOrderToolId);
@@ -268,7 +273,7 @@ class WorkspaceToolsParametersController extends AbstractParametersController
 
     /**
      * @Route(
-     *     "/{workspaceId}/tools/{workspaceOrderToolId}/edit",
+     *     "/{id}/tools/{workspaceOrderToolId}/edit",
      *     name="claro_workspace_order_tool_edit"
      * )
      * @Method("POST")

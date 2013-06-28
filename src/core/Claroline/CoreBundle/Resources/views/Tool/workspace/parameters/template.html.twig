@@ -1,6 +1,5 @@
 {% extends 'ClarolineCoreBundle:Workspace:layout.html.twig' %}
 {% block section_content %}
-<<<<<<< HEAD
     <ul class="breadcrumb">
         <li>
             <a href="{{ path('claro_workspace_open_tool',
@@ -9,16 +8,6 @@
             </a>
         </li>
     </ul>
-||||||| merged common ancestors
-    <ul class="breadcrumb">
-        <li>
-            <a href="{{ path('claro_workspace_open_tool',
-               {'workspaceId': workspace.getId(), 'toolName': 'parameters'}) }}">
-               {{ 'parameters'|trans({}, 'platform') }}
-            </a>
-        </li>
-    </ul>
-=======
 
     {{
         macros.breadcrumbs([
@@ -28,7 +17,7 @@
             },
             {
                 'name': 'general'|trans({}, 'platform'),
-                'href': path('claro_workspace_edit_form', {'workspace': workspace.getId()})
+                'href': path('claro_workspace_edit_form', {'id': workspace.getId()})
             },
             {
                 'name': 'save_as_template'|trans({}, 'platform'),
@@ -36,16 +25,15 @@
             }
         ])
     }}
->>>>>>> c781053ab242327ed177c0ddf71709c274c414c9
 
     <form class="form-horizontal"
-          action="{{ path('claro_workspace_export', {'workspace': workspace.getId() }) }}"
+          action="{{ path('claro_workspace_export', {'id': workspace.getId() }) }}"
           method="post" {{ form_enctype(form) }}>
         <fieldset>
             {{ form_widget(form) }}
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary">{{ 'ok'|trans({}, 'platform') }}</button>
-                <a href="{{ path('claro_workspace_edit_form', {'workspace': workspace.getId()}) }}">
+                <a href="{{ path('claro_workspace_edit_form', {'id': workspace.getId()}) }}">
                     <button type="button" class="btn">{{ 'cancel'|trans({}, 'platform') }}</button>
                 </a>
             </div>

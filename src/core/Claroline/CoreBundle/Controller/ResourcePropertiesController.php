@@ -19,7 +19,7 @@ class ResourcePropertiesController extends Controller
 {
     /**
      * @Route(
-     *     "/rename/form/{resourceId}",
+     *     "/rename/form/{id}",
      *     name="claro_resource_rename_form",
      *     options={"expose"=true}
      * )
@@ -43,7 +43,7 @@ class ResourcePropertiesController extends Controller
 
     /**
      * @Route(
-     *     "/rename/{resourceId}",
+     *     "/rename/{id}",
      *     name="claro_resource_rename",
      *     options={"expose"=true}
      * )
@@ -89,7 +89,7 @@ class ResourcePropertiesController extends Controller
 
     /**
      * @Route(
-     *     "/properties/form/{resourceId}",
+     *     "/properties/form/{id}",
      *     name="claro_resource_form_properties",
      *     options={"expose"=true}
      * )
@@ -111,7 +111,7 @@ class ResourcePropertiesController extends Controller
 
     /**
      * @Route(
-     *     "/properties/edit/{resourceId}",
+     *     "/properties/edit/{id}",
      *     name="claro_resource_edit_properties",
      *     options={"expose"=true}
      * )

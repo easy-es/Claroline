@@ -13,7 +13,7 @@ class FileControlller extends Controller
 {
 	/**
      * @Route(
-     *     "resource/img/{imageId}",
+     *     "resource/img/{id}",
      *     name="claro_file_get_image",
      *     options={"expose"=true}
      * )

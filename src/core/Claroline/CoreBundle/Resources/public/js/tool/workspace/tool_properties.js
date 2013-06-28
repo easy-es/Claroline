@@ -26,12 +26,12 @@
         if (isCurrentElementChecked) {
             route = Routing.generate(
                 'claro_tool_workspace_add',
-                { 'toolId' : toolId, 'position': rowIndex, 'workspaceId': wsId, 'roleId': roleId }
+                { 'toolId' : toolId, 'position': rowIndex, 'id': wsId, 'roleId': roleId }
             );
         } else {
             route = Routing.generate(
                 'claro_tool_workspace_remove',
-                { 'toolId' : toolId, 'workspaceId': wsId, 'roleId': roleId }
+                { 'toolId' : toolId, 'id': wsId, 'roleId': roleId }
             );
         }
         $.ajax({url: route, type: 'POST'});
@@ -66,7 +66,7 @@
             }
             var route = Routing.generate(
                 'claro_tool_workspace_move',
-                { 'toolId': toolId, 'position': index, 'workspaceId': wsId }
+                { 'toolId': toolId, 'position': index, 'id': wsId }
             );
             $.ajax({url: route, type: 'POST'});
         }
@@ -94,7 +94,7 @@
             }
             var route = Routing.generate(
                 'claro_tool_workspace_move',
-                { 'toolId': toolId, 'position': index, 'workspaceId': wsId }
+                { 'toolId': toolId, 'position': index, 'id': wsId }
             );
             $.ajax({url: route, type: 'POST'});
         }

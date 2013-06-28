@@ -27,7 +27,7 @@
                 <td><input type="checkbox" class="chk-admin-lock" value="1" {% if wconfig.isLocked() %} checked {% endif %}></td>
                 <td>
                     {% if wconfig.getWidget().isConfigurable() %}
-                    <a href="{{ path('claro_admin_widget_configuration_workspace', {'widgetId': wconfig.getWidget().getId()}) }}">{{ 'configure'|trans({}, 'platform') }}</a>
+                    <a href="{{ path('claro_admin_widget_configuration_workspace', {'id': wconfig.getWidget().getId()}) }}">{{ 'configure'|trans({}, 'platform') }}</a>
                     {% endif %}
                 </td>
             </tr>

@@ -14,7 +14,7 @@ class ResourceManagerController extends Controller
 {
     /**
      * @Route(
-     *     "/workspace/{workspace}/rights/form/role/{role}",
+     *     "/workspace/{id}/rights/form/role/{role}",
      *     name="claro_workspace_resource_rights_creation_form"
      * )
      * @Method("GET")
@@ -26,10 +26,7 @@ class ResourceManagerController extends Controller
      *
      * @return Response
      */
-    public function workspaceResourceRightsCreationFormAction(
-        AbstractWorkspace $workspace,
-        Role $role
-    )
+    public function workspaceResourceRightsCreationFormAction( AbstractWorkspace $workspace, Role $role)
     {
         $em = $this->get('doctrine.orm.entity_manager');
         if (!$this->get('security.context')->isGranted('parameters', $workspace)) {

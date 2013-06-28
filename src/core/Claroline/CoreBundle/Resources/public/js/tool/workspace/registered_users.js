@@ -10,7 +10,7 @@
         $('.button-parameters-user').live('click', function () {
             var route = Routing.generate(
                 'claro_workspace_tools_show_user_parameters',
-                {'userId': $(this).attr('data-user-id'), 'workspaceId': twigWorkspaceId}
+                {'userId': $(this).attr('data-user-id'), 'id': twigWorkspaceId}
             );
 
             window.location.href = route;
@@ -47,7 +47,7 @@
                 i++;
             });
             parameters.ids = array;
-            var route = Routing.generate('claro_workspace_delete_users', {'workspaceId': twigWorkspaceId});
+            var route = Routing.generate('claro_workspace_delete_users', {'id': twigWorkspaceId});
             route += '?' + $.param(parameters);
             $.ajax({
                 url: route,

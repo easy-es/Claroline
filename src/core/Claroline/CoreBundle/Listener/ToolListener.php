@@ -49,7 +49,7 @@ class ToolListener
         $workspaceId = $event->getWorkspace()->getId();
         $response = $this->forward(
             'ClarolineCoreBundle:Tool\User:registeredUsersList',
-            array('workspaceId' => $workspaceId, 'page' => 1, 'search' => '')
+            array('id' => $workspaceId, 'page' => 1, 'search' => '')
         );
         $event->setContent($response->getContent());
     }
@@ -165,7 +165,7 @@ class ToolListener
 
         return $this->container->get('templating')->render(
             'ClarolineCoreBundle:Tool/workspace/calendar:calendar.html.twig',
-            array('workspace' => $workspace,
+            array('id' => $workspace,
                 'form' => $form->createView(),
                 'listEvents' => $listEvents )
         );

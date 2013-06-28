@@ -20,7 +20,7 @@ class WorkspaceCalendarController extends Controller
 
     /**
      * @Route(
-     *     "/{workspaceId}/add",
+     *     "/{id}/add",
      *     name="claro_workspace_agenda_add_event"
      * )
      *
@@ -84,7 +84,7 @@ class WorkspaceCalendarController extends Controller
 
     /**
      * @Route(
-     *     "/{workspaceId}/update",
+     *     "/{id}/update",
      *     name="claro_workspace_agenda_update"
      * )
      * @Method("POST")
@@ -129,7 +129,7 @@ class WorkspaceCalendarController extends Controller
 
     /**
      * @Route(
-     *     "/{workspaceId}/delete",
+     *     "/{id}/delete",
      *     name="claro_workspace_agenda_delete"
      * )
      * @Method("POST")

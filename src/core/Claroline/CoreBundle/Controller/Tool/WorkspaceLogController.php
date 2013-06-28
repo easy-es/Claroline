@@ -18,15 +18,15 @@ class WorkspaceLogController extends Controller
 {
     /**
      * @Route(
-     *     "/{workspaceId}",
+     *     "/{id}",
      *     name="claro_workspace_logs_show",
-     *     requirements={"workspaceId" = "\d+"},
+     *     requirements={"id" = "\d+"},
      *     defaults={"page" = 1}
      * )
      * @Route(
-     *     "/{workspaceId}/{page}",
+     *     "/{id}/{page}",
      *     name="claro_workspace_logs_show_paginated",
-     *     requirements={"workspaceId" = "\d+", "page" = "\d+"},
+     *     requirements={"id" = "\d+", "page" = "\d+"},
      *     defaults={"page" = 1}
      * )
      *

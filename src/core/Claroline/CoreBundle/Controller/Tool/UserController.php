@@ -24,7 +24,7 @@ class UserController extends Controller
 
     /**
      * @Route(
-     *     "/{workspaceId}/users/registered/page/{page}",
+     *     "/{id}/users/registered/page/{page}",
      *     name="claro_workspace_registered_user_list",
      *     defaults={"page"=1, "search"=""},
      *     options = {"expose"=true}
@@ -33,7 +33,7 @@ class UserController extends Controller
      * @Method("GET")
      *
      * @Route(
-     *     "/{workspaceId}/users/registered/page/{page}/search/{search}",
+     *     "/{id}/users/registered/page/{page}/search/{search}",
      *     name="claro_workspace_registered_user_list_search",
      *     defaults={"page"=1},
      *     options = {"expose"=true}
@@ -45,6 +45,7 @@ class UserController extends Controller
      */
     public function registeredUsersListAction(AbstractWorkspace $workspace, $page, $search)
     {
+        $em = $this->get('doctrine.orm.entity_manager');
         $this->checkRegistration($workspace);
         $repo = $em->getRepository('ClarolineCoreBundle:User');
         $query = ($search == "") ?
@@ -56,7 +57,7 @@ class UserController extends Controller
         $pager->setCurrentPage($page);
 
         return array(
-            'workspace' => $workspace,
+            'id' => $workspace,
             'pager' => $pager,
             'search' => $search
         );
@@ -64,7 +65,7 @@ class UserController extends Controller
 
     /**
      * @Route(
-     *     "/{workspaceId}/users/unregistered/page/{page}",
+     *     "/{id}/users/unregistered/page/{page}",
      *     name="claro_workspace_unregistered_user_list",
      *     defaults={"page"=1, "search"=""},
      *     options = {"expose"=true}
@@ -73,7 +74,7 @@ class UserController extends Controller
      * @Method("GET")
      *
      * @Route(
-     *     "/{workspaceId}/users/unregistered/page/{page}/search/{search}",
+     *     "/{id}/users/unregistered/page/{page}/search/{search}",
      *     name="claro_workspace_unregistered_user_list_search",
      *     defaults={"page"=1},
      *     options = {"expose"=true}
@@ -96,7 +97,7 @@ class UserController extends Controller
         $pager->setCurrentPage($page);
 
         return array(
-            'workspace' => $workspace,
+            'id' => $workspace,
             'pager' => $pager,
             'search' => $search
         );
@@ -104,16 +105,16 @@ class UserController extends Controller
 
     /**
      * @Route(
-     *     "/{workspaceId}/user/{userId}",
+     *     "/{id}/user/{userId}",
      *     name="claro_workspace_tools_show_user_parameters",
-     *     requirements={"workspaceId"="^(?=.*[1-9].*$)\d*$", "userId"="^(?=.*[1-9].*$)\d*$" },
+     *     requirements={"id"="^(?=.*[1-9].*$)\d*$", "userId"="^(?=.*[1-9].*$)\d*$" },
      *     options={"expose"=true}
      * )
      *
      * @Route(
-     *     "/{workspaceId}/user/{userId}",
+     *     "/{id}/user/{userId}",
      *     name="claro_workspace_tools_edit_user_parameters",
-     *     requirements={"workspaceId"="^(?=.*[1-9].*$)\d*$", "userId"="^(?=.*[1-9].*$)\d*$" },
+     *     requirements={"id"="^(?=.*[1-9].*$)\d*$", "userId"="^(?=.*[1-9].*$)\d*$" },
      *     options={"expose"=true}
      * )
      * @Method({"POST", "GET"})
@@ -172,7 +173,7 @@ class UserController extends Controller
             $em->flush();
             $route = $this->get('router')->generate(
                 'claro_workspace_open_tool',
-                array('workspaceId' => $workspaceId, 'toolName' => 'user_management')
+                array('id' => $workspaceId, 'toolName' => 'user_management')
             );
 
             $log = new LogWorkspaceRoleUnsubscribeEvent($role, $user);
@@ -194,7 +195,7 @@ class UserController extends Controller
 
     /**
      * @Route(
-     *     "/{workspaceId}/add/user",
+     *     "/{id}/add/user",
      *     name="claro_workspace_multiadd_user",
      *     options={"expose"=true},
      *     requirements={"workspaceId"="^(?=.*[1-9].*$)\d*$"}
@@ -243,10 +244,10 @@ class UserController extends Controller
 
     /**
      * @Route(
-     *     "/{workspaceId}/users",
+     *     "/{id}/users",
      *     name="claro_workspace_delete_users",
      *     options={"expose"=true},
-     *     requirements={"workspaceId"="^(?=.*[1-9].*$)\d*$"}
+     *     requirements={"id"="^(?=.*[1-9].*$)\d*$"}
      * )
      * @Method("DELETE")
      *

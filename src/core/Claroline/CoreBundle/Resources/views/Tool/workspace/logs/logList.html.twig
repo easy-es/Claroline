@@ -1,7 +1,7 @@
 {% extends 'ClarolineCoreBundle:Workspace:layout.html.twig' %}
 
 {% block section_content %}
-    {% set filterFormAction = path('claro_workspace_logs_show', {'workspaceId': workspace.id}) %}
+    {% set filterFormAction = path('claro_workspace_logs_show', {'id': workspace.id}) %}
     {% set pagination %}
         {{ 
             pagerfanta(
@@ -10,7 +10,7 @@
                 {
                     'proximity' : 1, 
                     'routeName': 'claro_workspace_logs_show_paginated',
-                    'routeParams': {'workspaceId': workspace.id, 'filter': filter}
+                    'routeParams': {'id': workspace.id, 'filter': filter}
                 }
             )
         }}

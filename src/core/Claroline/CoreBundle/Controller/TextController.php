@@ -146,7 +146,7 @@ class TextController extends Controller
 
     /**
      * @Route(
-     *     "/history/{textId}",
+     *     "/history/{id}",
      *     name="claro_text_history"
      * )
      *

@@ -65,7 +65,7 @@ class LogController extends Controller
 
     /**
      * @Route(
-     *     "/view_details/{logId}",
+     *     "/view_details/{id}",
      *     name="claro_log_view_details",
      *     options={"expose"=true}
      * )
